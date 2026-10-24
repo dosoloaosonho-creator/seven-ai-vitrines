@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CRM SEVEN AI</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: barra de empresa no topo, funil em colunas por etapa, ficha do lead em painel lateral */
+:root{
+  --bg:#f3f5f4; --surface:#ffffff; --fg:#17211d; --muted:#5d6b65; --line:#dfe5e2;
+  --accent:#0f7a5c; --accent-ink:#ffffff; --warn:#a15c00; --bad:#b3261e; --ok:#1e7b4b;
+  --font:"Figtree","Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0f1513; --surface:#18201d; --fg:#e7eeea; --muted:#9aaba3; --line:#2a3531;
+  --accent:#3fc297; --accent-ink:#06150f; --warn:#e3a34b; --bad:#ff8a80; --ok:#6fd49c; color-scheme:dark } }
+:root[data-theme="dark"]{ --bg:#0f1513; --surface:#18201d; --fg:#e7eeea; --muted:#9aaba3; --line:#2a3531;
+  --accent:#3fc297; --accent-ink:#06150f; --warn:#e3a34b; --bad:#ff8a80; --ok:#6fd49c; color-scheme:dark }
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--fg);font:15px/1.5 var(--font);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 32px}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:6px}
+header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding-block:16px}
+h1{font-size:20px;margin:0;font-weight:800;letter-spacing:-.01em}
+h1 span{color:var(--muted);font-weight:500}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+select,input,textarea{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:9px 12px}
+.btn{border:0;border-radius:10px;padding:9px 14px;font-weight:700;cursor:pointer;background:var(--accent);color:var(--accent-ink)}
+.btn.ghost{background:transparent;color:var(--fg);box-shadow:inset 0 0 0 1px var(--line)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px}
+#login{max-width:420px;margin:12vh auto 0;display:grid;gap:14px}
+#login p{margin:0;color:var(--muted)}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:14px}
+@media (max-width:720px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.kpi b{display:block;font-size:26px;font-variant-numeric:tabular-nums;line-height:1.1}
+.kpi span{color:var(--muted);font-size:13px}
+.board{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(240px,1fr);gap:12px;overflow-x:auto;padding-bottom:8px}
+.col{background:color-mix(in srgb,var(--surface) 55%,var(--bg));border:1px solid var(--line);border-radius:14px;padding:10px;display:grid;gap:8px;align-content:start;min-height:120px}
+.col h2{font-size:13px;margin:2px 4px 4px;display:flex;justify-content:space-between;color:var(--muted);font-weight:700}
+.lead{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;text-align:left;cursor:pointer;display:grid;gap:3px;width:100%}
+.lead:hover{border-color:var(--accent)}
+.lead b{font-size:15px}
+.lead small{color:var(--muted)}
+.tag{display:inline-block;font-size:11.5px;font-weight:700;padding:2px 8px;border-radius:999px;background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent)}
+.tag.warn{background:color-mix(in srgb,var(--warn) 16%,transparent);color:var(--warn)}
+aside{position:fixed;inset:0 0 0 auto;width:min(460px,100%);background:var(--surface);border-left:1px solid var(--line);padding:20px max(16px,env(safe-area-inset-right,0px)) 24px 20px;overflow-y:auto;box-shadow:-20px 0 40px -30px rgba(0,0,0,.4);z-index:5}
+aside h3{margin:0 0 4px;font-size:20px}
+aside dl{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;margin:14px 0}
+aside dt{color:var(--muted)} aside dd{margin:0;overflow-wrap:anywhere}
+aside section{border-top:1px solid var(--line);padding-top:12px;margin-top:12px;display:grid;gap:8px}
+aside section h4{margin:0;font-size:13px;color:var(--muted)}
+.item{font-size:14px;display:flex;justify-content:space-between;gap:8px;align-items:center}
+.msg{font-size:14px;padding:6px 10px;border-radius:10px;background:var(--bg);max-width:90%}
+.msg.out{justify-self:end;background:color-mix(in srgb,var(--accent) 14%,var(--bg))}
+#toast{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:10px;font-weight:600}
+.empty{color:var(--muted);font-size:14px;padding:8px}
+.err{color:var(--bad)}
+</style>
+</head>
+<body>
+<header>
+  <h1>CRM <span>SEVEN AI</span></h1>
+  <div class="row" id="bar" hidden>
+    <label for="tenant" class="sr">Empresa</label>
+    <select id="tenant"></select>
+    <button class="btn ghost" id="reload" type="button">Atualizar</button>
+    <button class="btn ghost" id="logout" type="button">Sair</button>
+  </div>
+</header>
+
+<main>
+  <form id="login" class="card" hidden>
+    <h2 style="margin:0">Entrar</h2>
+    <p>Digite o seu e-mail. Você recebe um link de acesso; não existe senha aqui.</p>
+    <input id="email" type="email" autocomplete="email" placeholder="seu@email.com" required>
+    <button class="btn" type="submit">Enviar link de acesso</button>
+    <p id="login-msg" role="status"></p>
+  </form>
+
+  <div id="app" hidden>
+    <div class="kpis">
+      <div class="card kpi"><b id="k-leads">—</b><span>leads no funil</span></div>
+      <div class="card kpi"><b id="k-novos">—</b><span>novos, sem atendimento</span></div>
+      <div class="card kpi"><b id="k-follow">—</b><span>follow-ups pendentes</span></div>
+      <div class="card kpi"><b id="k-agenda">—</b><span>compromissos nos próximos 7 dias</span></div>
+    </div>
+    <div class="board" id="board"></div>
+  </div>
+  <p id="setup" class="card err" hidden></p>
+</main>
+
+<aside id="drawer" hidden aria-label="Ficha do lead"></aside>
+<div id="toast" hidden role="status"></div>
+
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>
+(function(){
+  "use strict";
+  var STAGES=[["new","Novo"],["em_atendimento","Em atendimento"],["agendado","Visita / horário marcado"],["proposta","Proposta"],["ganho","Ganho"],["perdido","Perdido"]];
+  var C=window.SEVEN_CRM_CONFIG||{};
+  var $=function(s){return document.querySelector(s)};
+  function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
+  function toast(t){var n=$("#toast");n.textContent=t;n.hidden=false;clearTimeout(n._t);n._t=setTimeout(function(){n.hidden=true},2600)}
+  function when(s){if(!s)return"—";var d=new Date(s);return d.toLocaleString("pt-BR",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"})}
+  if(!C.url||!C.publishableKey||!window.supabase){var s=$("#setup");s.hidden=false;s.textContent="CRM ainda não configurado: falta o endereço do Supabase em config.js.";return}
+  var sb=window.supabase.createClient(C.url,C.publishableKey,{auth:{persistSession:true,detectSessionInUrl:true}});
+  var P=sb.schema("platform"), state={tenant:null,leads:[],contacts:{}};
+
+  $("#login").addEventListener("submit",async function(e){
+    e.preventDefault();var m=$("#login-msg");m.textContent="Enviando…";
+    var r=await sb.auth.signInWithOtp({email:$("#email").value.trim(),options:{emailRedirectTo:location.href.split("#")[0],shouldCreateUser:false}});
+    m.textContent=r.error?"Não foi possível enviar. Confira se o e-mail tem acesso ao CRM.":"Pronto. Abra o link que chegou no seu e-mail.";
+  });
+  $("#logout").addEventListener("click",async function(){await sb.auth.signOut();location.reload()});
+  $("#reload").addEventListener("click",function(){load()});
+  $("#tenant").addEventListener("change",function(e){state.tenant=Number(e.target.value);try{localStorage.setItem("crm-tenant",e.target.value)}catch(_){ }load()});
+
+  async function start(){
+    var s=(await sb.auth.getSession()).data.session;
+    if(!s){$("#login").hidden=false;return}
+    $("#bar").hidden=false;$("#app").hidden=false;
+    var t=await P.from("tenants").select("id,slug,display_name,tenant_kind").order("display_name");
+    if(t.error||!t.data.length){var x=$("#setup");x.hidden=false;x.textContent="Seu usuário ainda não tem acesso a nenhuma empresa.";return}
+    var sel=$("#tenant");sel.innerHTML="";
+    t.data.forEach(function(r){var o=el("option",null,r.display_name+(r.tenant_kind==="demo"?" (demo)":""));o.value=r.id;sel.appendChild(o)});
+    var saved=null;try{saved=localStorage.getItem("crm-tenant")}catch(_){ }
+    if(saved&&t.data.some(function(r){return String(r.id)===saved}))sel.value=saved;
+    state.tenant=Number(sel.value);load();
+  }
+
+  async function load(){
+    var tid=state.tenant, now=new Date(), week=new Date(now.getTime()+7*864e5);
+    var [L,F,E]=await Promise.all([
+      P.from("leads").select("id,contact_id,source,status,qualification,created_at,updated_at").eq("tenant_id",tid).order("updated_at",{ascending:false}).limit(500),
+      P.from("followups").select("id",{count:"exact",head:true}).eq("tenant_id",tid).eq("status","pending"),
+      P.from("calendar_events").select("id",{count:"exact",head:true}).eq("tenant_id",tid).gte("starts_at",now.toISOString()).lte("starts_at",week.toISOString())
+    ]);
+    if(L.error){toast("Não consegui ler os leads.");return}
+    state.leads=L.data;
+    var ids=[...new Set(L.data.map(function(l){return l.contact_id}))];
+    state.contacts={};
+    if(ids.length){var c=await P.from("contacts").select("id,display_name,phone_e164,email").eq("tenant_id",tid).in("id",ids);(c.data||[]).forEach(function(x){state.contacts[x.id]=x})}
+    $("#k-leads").textContent=L.data.filter(function(l){return l.status!=="ganho"&&l.status!=="perdido"}).length;
+    $("#k-novos").textContent=L.data.filter(function(l){return l.status==="new"}).length;
+    $("#k-follow").textContent=F.count==null?"—":F.count;
+    $("#k-agenda").textContent=E.count==null?"—":E.count;
+    render();
+  }
+
+  function render(){
+    var b=$("#board");b.innerHTML="";
+    STAGES.forEach(function(st){
+      var col=el("div","col"), list=state.leads.filter(function(l){return (l.status||"new")===st[0]});
+      var h=el("h2");h.appendChild(el("span",null,st[1]));h.appendChild(el("span",null,String(list.length)));col.appendChild(h);
+      if(!list.length)col.appendChild(el("div","empty","Nenhum lead aqui."));
+      list.forEach(function(l){
+        var c=state.contacts[l.contact_id]||{}, q=l.qualification||{}, i=q.interesse||{};
+        var btn=el("button","lead");btn.type="button";
+        btn.appendChild(el("b",null,c.display_name||"Sem nome"));
+        btn.appendChild(el("small",null,[i.servico,i.detalhe].filter(Boolean).join(" · ")||"Interesse não informado"));
+        var meta=el("div","row");meta.appendChild(el("span","tag",l.source==="site"?"Site":l.source==="whatsapp"?"WhatsApp":(l.source||"—")));
+        meta.appendChild(el("small",null,when(l.created_at)));btn.appendChild(meta);
+        btn.addEventListener("click",function(){open(l)});col.appendChild(btn);
+      });
+      b.appendChild(col);
+    });
+  }
+
+  async function open(l){
+    var d=$("#drawer"), c=state.contacts[l.contact_id]||{}, q=l.qualification||{}, i=q.interesse||{};
+    d.innerHTML="";d.hidden=false;
+    var top=el("div","row");top.style.justifyContent="space-between";
+    top.appendChild(el("h3",null,c.display_name||"Sem nome"));
+    var x=el("button","btn ghost","Fechar");x.type="button";x.addEventListener("click",function(){d.hidden=true});top.appendChild(x);d.appendChild(top);
+    var dl=el("dl");
+    [["WhatsApp",c.phone_e164],["E-mail",c.email],["Origem",l.source==="site"?"Formulário do site":l.source],["Página",q.pagina],["Serviço",i.servico],["Detalhe",i.detalhe],["Data pedida",[i.data,i.horario].filter(Boolean).join(" ")],["Mensagem",i.mensagem],["Entrou em",when(l.created_at)]]
+      .forEach(function(p){if(!p[1])return;dl.appendChild(el("dt",null,p[0]));dl.appendChild(el("dd",null,p[1]))});
+    d.appendChild(dl);
+    var stage=el("div","row"), sel=el("select");sel.id="stage";
+    STAGES.forEach(function(s){var o=el("option",null,s[1]);o.value=s[0];if(s[0]===(l.status||"new"))o.selected=true;sel.appendChild(o)});
+    var save=el("button","btn","Mudar etapa");save.type="button";
+    save.addEventListener("click",async function(){var r=await P.from("leads").update({status:sel.value,updated_at:new Date().toISOString()}).eq("tenant_id",state.tenant).eq("id",l.id);
+      if(r.error)toast("Sem permissão para mudar a etapa.");else{toast("Etapa alterada.");load();d.hidden=true}});
+    stage.appendChild(sel);stage.appendChild(save);d.appendChild(stage);
+
+    var fs=el("section");fs.appendChild(el("h4",null,"Follow-ups"));d.appendChild(fs);
+    var f=await P.from("followups").select("id,reason,scheduled_at,status").eq("tenant_id",state.tenant).eq("contact_id",l.contact_id).order("scheduled_at");
+    if(!f.data||!f.data.length)fs.appendChild(el("div","empty","Nenhum follow-up."));
+    (f.data||[]).forEach(function(r){var it=el("div","item");it.appendChild(el("span",null,when(r.scheduled_at)+" · "+(r.reason==="site_lead_d1"?"retorno do dia seguinte":r.reason)));it.appendChild(el("span","tag"+(r.status==="pending"?" warn":""),r.status==="pending"?"pendente":r.status));fs.appendChild(it)});
+
+    var ms=el("section");ms.appendChild(el("h4",null,"Conversa no WhatsApp"));d.appendChild(ms);
+    var cv=await P.from("conversations").select("id").eq("tenant_id",state.tenant).eq("contact_id",l.contact_id).order("id",{ascending:false}).limit(1);
+    if(cv.data&&cv.data[0]){var m=await P.from("messages").select("direction,body,created_at").eq("tenant_id",state.tenant).eq("conversation_id",cv.data[0].id).order("created_at").limit(100);
+      (m.data||[]).forEach(function(r){ms.appendChild(el("div","msg"+(r.direction==="outbound"?" out":""),r.body||""))});
+      if(!m.data||!m.data.length)ms.appendChild(el("div","empty","Sem mensagens registradas."));}
+    else ms.appendChild(el("div","empty","Ainda não conversou pelo WhatsApp."));
+  }
+
+  sb.auth.onAuthStateChange(function(ev){if(ev==="SIGNED_IN"&&$("#app").hidden)location.reload()});
+  start();
+})();
+</script>
+</body>
+</html>

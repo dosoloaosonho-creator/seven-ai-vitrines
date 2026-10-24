@@ -1,0 +1,671 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Sua Imobiliária Litoral</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Demonstração SEVEN AI: site de imobiliária com agendamento de visitas e Funcionário Digital no WhatsApp.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600;700&display=swap">
+<style>
+
+/* Layout: cidade 3D ao entardecer atrás do título; blocos escuros de "noite no litoral" com acento dourado do pôr do sol */
+:root{
+  --bg:#0f2430; --surface:#163341; --fg:#eef3ee; --muted:#a3b9bd; --line:#2b4a58;
+  --accent:#f3b64a; --accent-ink:#1d1406; --accent2:#5cc6b9; --danger:#ff9b8a;
+  --band-bg:#f3b64a; --band-fg:#1d1406;
+  --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif; --display-w:800;
+  --body:"Instrument Sans", "Segoe UI", system-ui, sans-serif;
+  --card-shadow:0 1px 0 rgba(255,255,255,.04) inset, 0 24px 60px -30px rgba(0,0,0,.6);
+  --fallback:linear-gradient(160deg,#0f2430,#1d4a5a 40%,#c77a3a 75%,#f3b64a);
+  color-scheme:dark;
+}
+/* ===== Base comum — cada vitrine define os tokens no :root ===== */
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} *{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important} }
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+h1,h2,h3{font-family:var(--display);line-height:1.08;text-wrap:balance;margin:0;font-weight:var(--display-w,600)}
+p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:6px}
+.wrap{max-width:1160px;margin:0 auto;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+section{padding-block:clamp(64px,9vw,112px)}
+.sec-head{display:grid;gap:12px;max-width:640px;margin-bottom:clamp(28px,4vw,44px)}
+.sec-head h2{font-size:clamp(30px,4.4vw,48px)}
+.sec-head p{color:var(--muted);font-size:17px}
+
+/* faixa de demonstração */
+.demo-band{background:var(--band-bg);color:var(--band-fg);font-size:13px;line-height:1.4;position:relative;z-index:3}
+.demo-band .wrap{padding-block:9px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.demo-band b{font-weight:700}
+
+/* hero */
+.hero{position:relative;overflow:hidden;isolation:isolate}
+#scene{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:-1}
+.hero.no3d{background:var(--fallback);background-size:300% 300%;animation:fb 16s ease-in-out infinite alternate}
+@keyframes fb{from{background-position:0% 30%}to{background-position:100% 70%}}
+
+/* botões */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;border:0;border-radius:var(--btn-r,999px);padding:15px 26px;font-weight:700;font-size:16px;text-decoration:none;transition:transform .18s ease, box-shadow .18s ease, background .18s ease}
+.btn:active{transform:translateY(1px) scale(.98)}
+.btn-main{background:var(--accent);color:var(--accent-ink);box-shadow:0 10px 30px -10px var(--accent)}
+.btn-main:hover{transform:translateY(-2px);box-shadow:0 16px 36px -12px var(--accent)}
+.btn-ghost{background:transparent;color:inherit;box-shadow:inset 0 0 0 1.5px currentColor}
+.btn-ghost:hover{background:color-mix(in srgb, currentColor 8%, transparent)}
+
+/* ===== Agendamento ===== */
+.bk{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:clamp(24px,4vw,56px);align-items:start}
+@media (max-width:860px){ .bk{grid-template-columns:1fr} }
+.bk-card{background:var(--surface);border-radius:var(--card-r,22px);padding:clamp(20px,3vw,32px);box-shadow:var(--card-shadow);min-width:0}
+.bk-progress{list-style:none;display:flex;gap:6px;padding:0;margin:0 0 22px}
+.bk-progress li{flex:1;height:5px;border-radius:9px;background:var(--line);transition:background .3s}
+.bk-progress li.on{background:var(--accent)}
+.bk-step h3{font-size:22px;margin-bottom:6px}
+.bk-step .hint{color:var(--muted);font-size:14px;margin-bottom:18px}
+.bk-opts{display:grid;gap:10px}
+.bk-opt{display:flex;justify-content:space-between;align-items:center;gap:14px;text-align:left;background:var(--bg);border:1.5px solid var(--line);border-radius:14px;padding:14px 16px;transition:border-color .15s, transform .15s, background .15s}
+.bk-opt:hover{border-color:var(--accent);transform:translateX(3px)}
+.bk-opt.sel{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%, var(--bg))}
+.bk-opt-t{font-weight:700}
+.bk-opt-m{color:var(--muted);font-size:13px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.bk-chips{display:flex;flex-wrap:wrap;gap:10px}
+.bk-chip{border:1.5px solid var(--line);background:var(--bg);border-radius:999px;padding:10px 18px;font-weight:600;transition:border-color .15s, background .15s}
+.bk-chip:hover,.bk-chip.sel{border-color:var(--accent)}
+.bk-chip.sel{background:var(--accent);color:var(--accent-ink)}
+.bk-days{display:grid;grid-template-columns:repeat(auto-fill,minmax(68px,1fr));gap:8px}
+.bk-day{display:grid;justify-items:center;gap:0;border:1.5px solid var(--line);background:var(--bg);border-radius:14px;padding:10px 4px;transition:border-color .15s, transform .15s}
+.bk-day:hover{border-color:var(--accent);transform:translateY(-2px)}
+.bk-day.sel{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.bk-day-w,.bk-day-m{font-size:12px;opacity:.75}
+.bk-day-n{font-size:22px;font-weight:800;font-family:var(--display);font-variant-numeric:tabular-nums}
+.bk-times{display:grid;grid-template-columns:repeat(auto-fill,minmax(82px,1fr));gap:8px}
+.bk-time{border:1.5px solid var(--line);background:var(--bg);border-radius:12px;padding:11px 6px;font-weight:700;font-variant-numeric:tabular-nums;transition:border-color .15s}
+.bk-time:hover:not(:disabled){border-color:var(--accent)}
+.bk-time.sel{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.bk-time.busy{opacity:.38;text-decoration:line-through;cursor:not-allowed}
+.bk-form{display:grid;gap:14px}
+.bk-form label{display:grid;gap:6px;font-weight:600;font-size:14px}
+.bk-form input{font:inherit;color:var(--fg);background:var(--bg);border:1.5px solid var(--line);border-radius:12px;padding:13px 14px;width:100%}
+.bk-form input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 22%, transparent)}
+.bk-err{color:var(--danger);font-size:14px;min-height:1.2em}
+.bk-nav{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:18px;flex-wrap:wrap}
+.bk-back{background:none;border:0;color:var(--muted);font-weight:600;padding:8px 0}
+.bk-back:hover{color:var(--fg)}
+.bk-done{display:grid;justify-items:center;text-align:center;gap:12px;padding-block:10px}
+.bk-done svg{width:84px;height:84px}
+.bk-done circle{fill:color-mix(in srgb,var(--accent) 14%, transparent)}
+.bk-done path{fill:none;stroke:var(--accent);stroke-width:6;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:60;stroke-dashoffset:0}
+.bk-done svg.draw path{animation:draw .7s .1s ease-out both}
+@keyframes draw{from{stroke-dashoffset:60}to{stroke-dashoffset:0}}
+.bk-done .sum{font-weight:700;font-size:18px}
+.bk-done .note{color:var(--muted);font-size:14px;max-width:38ch}
+.bk-side{display:grid;gap:18px;min-width:0}
+.bk-side ul{list-style:none;padding:0;margin:0;display:grid;gap:14px}
+.bk-side li{display:grid;grid-template-columns:28px minmax(0,1fr);gap:12px;align-items:start}
+.bk-side li svg{width:26px;height:26px;color:var(--accent)}
+.bk-side li b{display:block}
+.bk-side li span{color:var(--muted);font-size:15px}
+
+/* ===== WhatsApp simulado ===== */
+.wa{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:clamp(28px,5vw,72px);align-items:center}
+@media (max-width:860px){ .wa{grid-template-columns:1fr} .phone{justify-self:center} }
+.wa-copy{display:grid;gap:18px;min-width:0}
+.wa-copy ul{margin:0;padding-left:20px;display:grid;gap:8px;color:var(--muted)}
+.phone{width:min(360px,100%);background:#0f1a17;border-radius:42px;padding:12px;box-shadow:0 40px 80px -30px rgba(0,0,0,.45), inset 0 0 0 2px rgba(255,255,255,.08)}
+.phone-top{display:flex;align-items:center;gap:10px;background:#1f2c27;color:#e9edef;border-radius:30px 30px 0 0;padding:16px 16px 12px}
+.phone-top .av{width:36px;height:36px;border-radius:50%;background:var(--accent);display:grid;place-items:center;color:var(--accent-ink);font-weight:800;font-size:14px}
+.phone-top b{display:block;font-size:15px;line-height:1.2}
+.phone-top small{font-size:12px;color:#8fd3a8}
+#chat-body{height:430px;overflow-y:auto;background:#e8e2d9;background-image:radial-gradient(rgba(0,0,0,.035) 1px, transparent 1px);background-size:14px 14px;padding:14px 10px;display:flex;flex-direction:column;gap:6px;border-radius:0 0 30px 30px;scroll-behavior:smooth}
+.msg{max-width:84%;padding:7px 10px 5px;border-radius:10px;font-size:14px;line-height:1.4;color:#111b21;box-shadow:0 1px .5px rgba(0,0,0,.13);animation:pop .25s ease-out}
+.msg p{white-space:pre-line}
+.msg.in{align-self:flex-start;background:#fff;border-top-left-radius:2px}
+.msg.out{align-self:flex-end;background:#d9fdd3;border-top-right-radius:2px}
+.msg.sys{align-self:center;background:#fff6c5;color:#54470e;font-size:12px;text-align:center;max-width:92%;box-shadow:none}
+.msg-time{display:block;text-align:right;font-size:10.5px;color:#667781;margin-top:2px}
+.typing{display:flex;gap:4px;padding:12px 14px}
+.typing i{width:7px;height:7px;border-radius:50%;background:#8696a0;animation:blink 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes blink{0%,100%{opacity:.3;transform:translateY(0)}50%{opacity:1;transform:translateY(-3px)}}
+@keyframes pop{from{opacity:0;transform:translateY(6px) scale(.97)}to{opacity:1;transform:none}}
+
+/* ===== Como funciona ===== */
+.how{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(16px,3vw,32px);counter-reset:how}
+@media (max-width:760px){ .how{grid-template-columns:1fr} }
+.how li{list-style:none;display:grid;gap:10px;counter-increment:how;min-width:0}
+.how li::before{content:counter(how);font-family:var(--display);font-size:44px;line-height:1;color:var(--accent);font-weight:700}
+.how h3{font-size:21px}
+.how p{color:var(--muted)}
+ol.how{padding:0;margin:0}
+
+/* ===== Contato / rodapé ===== */
+.final{display:grid;gap:22px;justify-items:start;max-width:720px}
+.final h2{font-size:clamp(32px,5vw,56px)}
+.final p{color:var(--muted);font-size:17px}
+.contact{display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:var(--surface);border-radius:16px;padding:14px 16px;box-shadow:var(--card-shadow);max-width:100%}
+.contact code{font-family:var(--body);font-weight:700;font-size:16px;user-select:all;overflow-wrap:anywhere}
+.contact button{border:0;background:var(--accent);color:var(--accent-ink);font-weight:700;border-radius:10px;padding:8px 14px}
+#copy-ok{font-size:13px;color:var(--muted);min-height:1em}
+footer{border-top:1px solid var(--line);font-size:14px;color:var(--muted)}
+footer .wrap{padding-block:26px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+.bk-hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.bk-consent{display:flex!important;grid-template-columns:none;gap:10px;align-items:flex-start;font-weight:500!important;color:var(--muted);font-size:13px!important}
+.bk-consent input{width:auto!important;margin-top:3px}
+
+
+.hero{min-height:clamp(560px,82vh,760px);display:flex;align-items:flex-end}
+.hero::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(15,36,48,.88) 0%,rgba(15,36,48,.45) 40%,transparent 66%),linear-gradient(180deg,transparent 40%,rgba(15,36,48,.6) 75%,var(--bg));pointer-events:none}
+@media (max-width:760px){ .hero::after{background:linear-gradient(180deg,rgba(15,36,48,.2) 0%,rgba(15,36,48,.82) 45%,var(--bg) 100%)} }
+.hero > .wrap{width:100%;padding-block:0 clamp(40px,7vw,80px);display:grid;gap:22px}
+.brand{position:absolute;top:22px;left:0;right:0}
+.brand .wrap{display:flex;justify-content:space-between;align-items:center;padding-block:0}
+.logo{font-family:var(--display);font-weight:800;font-size:20px;letter-spacing:-.02em;display:flex;gap:10px;align-items:center}
+.logo i{width:30px;height:30px;border-radius:9px;background:var(--accent);display:inline-block;clip-path:polygon(50% 8%,94% 46%,80% 46%,80% 92%,20% 92%,20% 46%,6% 46%)}
+.hero h1{font-size:clamp(42px,7.4vw,96px);letter-spacing:-.035em;max-width:13ch;line-height:.98}
+.hero p.lead{font-size:clamp(17px,1.6vw,20px);color:#d5e1df;max-width:46ch}
+.search{display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:rgba(15,36,48,.72);backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:18px;padding:10px;max-width:640px}
+.search .seg{display:flex;background:var(--bg);border-radius:12px;padding:4px}
+.search .seg button{border:0;background:none;padding:9px 14px;border-radius:9px;font-weight:600;color:var(--muted)}
+.search .seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.search .btn{padding:12px 20px;margin-left:auto}
+@media (max-width:560px){ .search .btn{margin-left:0;width:100%} }
+.props{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+@media (max-width:900px){ .props{grid-template-columns:1fr} }
+.prop{background:var(--surface);border-radius:20px;overflow:hidden;display:grid;box-shadow:var(--card-shadow);min-width:0;transition:transform .25s ease}
+.prop:hover{transform:translateY(-4px)}
+.plan{aspect-ratio:16/10;max-width:100%;background:#12303d;position:relative}
+.plan svg{position:absolute;inset:0;width:100%;height:100%}
+.plan svg rect,.plan svg path{fill:none;stroke:#5cc6b9;stroke-width:1.6}
+.plan svg text{fill:#a3b9bd;font:600 9px var(--body)}
+.plan .tag{position:absolute;top:12px;left:12px;background:var(--accent);color:var(--accent-ink);font-weight:700;font-size:12px;padding:4px 10px;border-radius:999px}
+.plan .ref{position:absolute;top:12px;right:12px;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.prop-b{padding:18px 18px 20px;display:grid;gap:10px}
+.prop-b h3{font-size:21px;letter-spacing:-.01em}
+.prop-b .where{color:var(--muted);font-size:14px}
+.specs{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:14px;font-variant-numeric:tabular-nums}
+.specs span{color:#d5e1df}
+.price{display:flex;justify-content:space-between;align-items:baseline;gap:10px;border-top:1px solid var(--line);padding-top:12px;flex-wrap:wrap}
+.price b{font-family:var(--display);font-size:24px;font-variant-numeric:tabular-nums}
+.price small{color:var(--muted);font-size:12px}
+.prop .btn{width:100%;padding:12px}
+.setores{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border-radius:20px;overflow:hidden}
+@media (max-width:900px){ .setores{grid-template-columns:repeat(2,minmax(0,1fr))} }
+@media (max-width:480px){ .setores{grid-template-columns:1fr} }
+.setor{background:var(--bg);padding:22px;display:grid;gap:6px;align-content:start;min-width:0}
+.setor h3{font-size:19px;color:var(--accent)}
+.setor p{color:var(--muted);font-size:15px}
+.whats{background:linear-gradient(180deg,var(--bg),#13303d)}
+#contato{background:radial-gradient(120% 90% at 100% 100%, rgba(243,182,74,.18), transparent 60%)}
+
+</style>
+</head>
+<body>
+
+<div class="demo-band"><div class="wrap"><b>Demonstração SEVEN AI</b> <span>Modelo de site para imobiliária no Litoral Norte. Imóveis, valores e nomes são ilustrativos.</span></div></div>
+
+
+<header class="hero">
+  <canvas id="scene" aria-hidden="true"></canvas>
+  <div class="brand"><div class="wrap"><span class="logo"><i></i>Sua Imobiliária</span><button class="btn btn-ghost" type="button" data-goto="agenda" style="padding:10px 18px">Agendar visita</button></div></div>
+  <div class="wrap">
+    <h1>Seu próximo endereço no litoral.</h1>
+    <p class="lead">Casas, apartamentos e terrenos com atendimento na hora, de dia ou de madrugada. Você conta o que procura, a gente mostra o que existe de verdade e marca a visita.</p>
+    <div class="search" role="group" aria-label="O que você procura">
+      <div class="seg"><button type="button" aria-pressed="true">Comprar</button><button type="button" aria-pressed="false">Alugar</button><button type="button" aria-pressed="false">Temporada</button></div>
+      <button class="btn btn-main" type="button" data-goto="destaques">Ver imóveis</button>
+    </div>
+  </div>
+</header>
+
+
+
+<section id="destaques">
+  <div class="wrap">
+    <div class="sec-head"><h2>Em destaque esta semana</h2><p>Imóveis de exemplo. No site do cliente, esta lista vem do cadastro da imobiliária e se atualiza sozinha.</p></div>
+    <div class="props">
+      <article class="prop">
+        <div class="plan"><span class="tag">Venda</span><span class="ref">Ref. SA-0142</span>
+          <svg viewBox="0 0 160 100" aria-hidden="true"><rect x="14" y="14" width="132" height="72"/><path d="M70 14v40M70 54h-56M110 14v72M110 50h36M70 70v16"/><text x="28" y="38">Sala</text><text x="80" y="38">Suíte</text><text x="118" y="34">Qto</text><text x="118" y="72">Qto</text><text x="26" y="74">Cozinha</text></svg></div>
+        <div class="prop-b"><h3>Casa térrea com quintal</h3><p class="where">Bairro residencial · 900 m da praia</p>
+          <div class="specs"><span>3 quartos</span><span>180 m²</span><span>2 vagas</span><span>Aceita pet</span></div>
+          <div class="price"><b>R$ 890 mil</b><small>IPTU R$ 2.140/ano</small></div>
+          <button class="btn btn-main" type="button" data-goto="agenda">Agendar visita</button></div>
+      </article>
+      <article class="prop">
+        <div class="plan"><span class="tag">Venda</span><span class="ref">Ref. SA-0207</span>
+          <svg viewBox="0 0 160 100" aria-hidden="true"><rect x="30" y="16" width="100" height="68"/><path d="M80 16v40M30 56h100M105 56v28"/><text x="40" y="40">Sala</text><text x="90" y="40">Quarto</text><text x="40" y="74">Varanda</text><text x="110" y="74">Qto</text></svg></div>
+        <div class="prop-b"><h3>Apartamento frente mar</h3><p class="where">Orla · 7º andar · vista lateral</p>
+          <div class="specs"><span>2 quartos</span><span>78 m²</span><span>1 vaga</span><span>Lazer completo</span></div>
+          <div class="price"><b>R$ 640 mil</b><small>Cond. R$ 650/mês</small></div>
+          <button class="btn btn-main" type="button" data-goto="agenda">Agendar visita</button></div>
+      </article>
+      <article class="prop">
+        <div class="plan"><span class="tag">Venda</span><span class="ref">Ref. SA-0311</span>
+          <svg viewBox="0 0 160 100" aria-hidden="true"><path d="M20 80 34 18h104l8 62z"/><text x="62" y="54">450 m²</text><text x="40" y="92">15 m de frente</text></svg></div>
+        <div class="prop-b"><h3>Terreno em condomínio</h3><p class="where">Portaria 24h · rua asfaltada</p>
+          <div class="specs"><span>450 m²</span><span>Plano</span><span>Escritura ok</span></div>
+          <div class="price"><b>R$ 310 mil</b><small>Aceita proposta*</small></div>
+          <button class="btn btn-main" type="button" data-goto="agenda">Agendar visita</button></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+
+<section id="agenda">
+  <div class="wrap">
+    <div class="sec-head"><h2>Marque sua visita</h2><p>Escolha o tipo de atendimento, o imóvel e um horário livre na agenda do corretor.</p></div>
+    <div class="bk">
+      <div class="bk-side">
+        <ul><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><div><b>Só horários livres</b><span>A agenda mostra o que o corretor tem de verdade. Não existe visita marcada em cima de outra.</span></div></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><div><b>Confirmação na véspera</b><span>O Funcionário Digital confirma pelo WhatsApp. Se a pessoa desistir, o horário volta para a agenda.</span></div></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><div><b>Ficha pronta para o corretor</b><span>Objetivo, faixa de valor, quartos e bairro chegam junto com a visita marcada.</span></div></li></ul>
+      </div>
+      <div class="bk-card" aria-live="polite">
+        <ol class="bk-progress" aria-label="Etapas do agendamento"><li></li><li></li><li></li><li></li><li></li><li></li></ol>
+        <div class="bk-step">
+          <h3>Como você quer ser atendido?</h3>
+          <p class="hint">Valores e durações de exemplo.</p>
+          <div class="bk-opts" id="bk-services"></div>
+        </div>
+        
+      <div class="bk-step" hidden>
+        <h3 id="bk-extra-label"></h3>
+        <p class="hint">Isso muda a duração e o preço.</p>
+        <div class="bk-chips" id="bk-extra"></div>
+        <div class="bk-nav"><button class="bk-back" type="button" data-back>Voltar</button></div>
+      </div>
+        <div class="bk-step" hidden>
+          <h3>Qual dia fica melhor?</h3>
+          <p class="hint">Mostramos só os dias com atendimento.</p>
+          <div class="bk-days" id="bk-dates"></div>
+          <div class="bk-nav"><button class="bk-back" type="button" data-back>Voltar</button></div>
+        </div>
+        <div class="bk-step" hidden>
+          <h3>Horários livres</h3>
+          <p class="hint" id="bk-date-label"></p>
+          <div class="bk-times" id="bk-times"></div>
+          <div class="bk-nav"><button class="bk-back" type="button" data-back>Voltar</button></div>
+        </div>
+        <div class="bk-step" hidden>
+          <h3>Para quem é o horário?</h3>
+          <p class="hint">Usamos o telefone só para confirmar e lembrar você.</p>
+          <form class="bk-form" id="bk-form" novalidate>
+            <label for="bk-name">Seu nome<input id="bk-name" name="nome" autocomplete="name" placeholder="Ex.: Mariana Souza"></label>
+            <label for="bk-phone">WhatsApp<input id="bk-phone" name="tel" inputmode="tel" autocomplete="tel" placeholder="(12) 99999-0000"></label>
+            <label class="bk-hp" aria-hidden="true">Site<input id="bk-website" name="website" tabindex="-1" autocomplete="off"></label>
+            <label class="bk-consent" id="bk-consent-wrap" hidden><input type="checkbox" id="bk-consent"> Aceito receber a confirmação e um retorno pelo WhatsApp. Esta página é uma demonstração da SEVEN AI; seus dados vão para o CRM de demonstração da SEVEN AI e não são compartilhados.</label>
+            <p class="bk-err" id="bk-err" role="alert"></p>
+            <div class="bk-nav"><button class="bk-back" type="button" data-back>Voltar</button><button class="btn btn-main" type="submit">Confirmar horário</button></div>
+          </form>
+        </div>
+        <div class="bk-step" hidden>
+          <div class="bk-done">
+            <svg id="bk-check" viewBox="0 0 84 84" aria-hidden="true"><circle cx="42" cy="42" r="40"/><path d="M26 43l11 11 21-23"/></svg>
+            <h3>Pronto, <span id="bk-sum-name"></span>!</h3>
+            <p class="sum" id="bk-sum"></p>
+            <p class="note" id="bk-done-note">Na véspera, o Funcionário Digital confirma a visita com você pelo WhatsApp. Esta é uma demonstração: nada foi enviado e os dados somem ao recarregar a página.</p>
+            <button class="btn btn-ghost" type="button" id="bk-restart">Fazer outro agendamento</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="whats" class="whats">
+  <div class="wrap wa">
+    <div class="wa-copy">
+      <h2 style="font-size:clamp(30px,4.4vw,48px)">Atende às 23h47 como se fosse 10h da manhã</h2>
+      <p style="color:var(--muted);font-size:17px">Quem pergunta de madrugada é quem está decidindo. O Funcionário Digital responde na hora, entende áudio e entrega para o corretor um cliente já qualificado.</p>
+      <ul><li>Entende texto e áudio, como o cliente prefere mandar</li><li>Faz uma pergunta por vez e não repete o que já foi respondido</li><li>Só fala de imóvel, preço e disponibilidade que estão no cadastro</li><li>Passa para o corretor quando o assunto é proposta, contrato ou desconto</li></ul>
+      <div><button class="btn btn-ghost" type="button" id="chat-play">Ver a conversa acontecendo</button></div>
+    </div>
+    <div class="phone" role="img" aria-label="Simulação de conversa no WhatsApp com o Funcionário Digital">
+      <div class="phone-top"><span class="av">SI</span><div><b>Sua Imobiliária</b><small>Funcionário Digital · online 24h</small></div></div>
+      <div id="chat-body"></div>
+    </div>
+  </div>
+</section>
+
+
+<section id="setores">
+  <div class="wrap">
+    <div class="sec-head"><h2>Oito setores, um atendimento</h2><p>O mesmo número do WhatsApp atende quem quer comprar, alugar, consertar, anunciar ou pagar. Cada assunto vai para a pessoa certa.</p></div>
+    <div class="setores">
+      <div class="setor"><h3>Vendas</h3><p>Qualifica o comprador e marca a visita.</p></div>
+      <div class="setor"><h3>Locação</h3><p>Filtra por valor, prazo e garantia.</p></div>
+      <div class="setor"><h3>Inquilinos</h3><p>Segunda via, dúvidas e avisos do contrato.</p></div>
+      <div class="setor"><h3>Manutenção</h3><p>Abre chamado, pergunta urgência e pede foto.</p></div>
+      <div class="setor"><h3>Proprietários</h3><p>Repasse, visitas feitas e propostas recebidas.</p></div>
+      <div class="setor"><h3>Financeiro</h3><p>Boletos e pendências, sem pedir cartão no chat.</p></div>
+      <div class="setor"><h3>Captação</h3><p>Recebe quem quer anunciar e agenda a avaliação.</p></div>
+      <div class="setor"><h3>Pós-venda</h3><p>Acompanha documentação e entrega das chaves.</p></div>
+    </div>
+  </div>
+</section>
+
+
+<section id="como">
+  <div class="wrap">
+    <div class="sec-head"><h2>Como funciona na sua empresa</h2><p>Do primeiro contato até a operação rodando sozinha.</p></div>
+    <ol class="how"><li><h3>Seu cadastro de imóveis</h3><p>Imóveis, fotos, regras e corretores entram no sistema. O funcionário só fala do que está cadastrado.</p></li><li><h3>Seu número no ar</h3><p>Ligamos o Funcionário Digital no WhatsApp da imobiliária e testamos com você antes de atender clientes.</p></li><li><h3>Leads e visitas no painel</h3><p>Cada conversa vira ficha de cliente, visita marcada ou encaminhamento para o corretor certo.</p></li></ol>
+  </div>
+</section>
+
+<section id="contato" class="contato">
+  <div class="wrap final">
+    <h2>Quer isso na sua imobiliária?</h2>
+    <p>A SEVEN AI monta o Funcionário Digital com o seu cadastro, seus horários e seus corretores. Esta página é um modelo; a sua fica com a sua marca e o seu domínio.</p>
+    <div class="contact"><code id="mail-text">dosoloaosonho@gmail.com</code><button type="button" id="copy-mail">Copiar e-mail</button></div>
+    <p id="copy-ok" aria-live="polite"></p>
+  </div>
+</section>
+
+<footer><div class="wrap"><span>Criado pela SEVEN AI – Funcionários Digitais para Empresas</span><span>Página de demonstração · dados ilustrativos</span></div></footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+window.VITRINE = {"intake": {"url": "https://fnyxkqumwprhflbhoksb.supabase.co/functions/v1/site-lead-intake", "tenant": "demo-imobiliaria-ubatuba"}, "services": [{"name": "Visita presencial ao imóvel", "meta": "45 min"}, {"name": "Visita por videochamada", "meta": "30 min"}, {"name": "Avaliar meu imóvel para vender ou alugar", "meta": "60 min"}, {"name": "Conversa sobre financiamento", "meta": "30 min"}], "extra": {"label": "Qual imóvel?", "options": ["Casa térrea · SA-0142", "Apto frente mar · SA-0207", "Terreno · SA-0311", "Ainda não escolhi"]}, "closed": [0], "slots": ["09:00", "10:00", "11:00", "13:30", "14:30", "15:30", "16:30", "17:30"], "chat": [{"f": "c", "t": "Oi, vi o anúncio da casa térrea. Ainda tá disponível?", "h": "23:47"}, {"f": "a", "t": "Oi! Que bom que você chamou 😊 Sou a assistente digital da Sua Imobiliária. A casa térrea (ref. SA-0142) está disponível no cadastro de hoje. Como posso te chamar?", "h": "23:47"}, {"f": "c", "t": "Carla", "h": "23:48"}, {"f": "a", "t": "Prazer, Carla! Você procura para morar ou para investir?", "h": "23:48"}, {"f": "c", "t": "🎤 Áudio · 0:18", "h": "23:49"}, {"f": "a", "t": "Ouvi seu áudio: é para morar, com duas crianças e um cachorro, até R$ 900 mil. Anotei tudo 👍\n\nA SA-0142 tem quintal de 60 m² e aceita pet. Quer visitar? Sábado tenho 10h ou 11h com o corretor Rafael.", "h": "23:49"}, {"f": "c", "t": "Sábado 10h", "h": "23:50"}, {"f": "a", "t": "Combinado! Visita marcada: sábado, 10h, casa térrea SA-0142. Na sexta eu te mando a confirmação por aqui 🏡", "h": "23:50"}, {"f": "s", "sys": true, "t": "Ficha enviada ao corretor Rafael: morar · até R$ 900 mil · 3 quartos · pet · visita sáb 10h"}]};
+
+window.buildScene = function(T, scene, camera, o){
+  scene.fog = new T.Fog(0x0f2430, 22, 58);
+  camera.position.set(0, 10, 24);
+  scene.add(new T.HemisphereLight(0x9fd6d0, 0x0f2430, 0.55));
+  var sun = new T.DirectionalLight(0xffb45a, 1.35); sun.position.set(-6, 5, -14); scene.add(sun);
+  var fill = new T.DirectionalLight(0x5cc6b9, 0.35); fill.position.set(8, 6, 10); scene.add(fill);
+  // sol no horizonte
+  var disc = new T.Mesh(new T.CircleGeometry(3.2, 48), new T.MeshBasicMaterial({color:0xf6c062, fog:false}));
+  disc.position.set(-5, 2.4, -30); scene.add(disc);
+  var halo = new T.Mesh(new T.CircleGeometry(6.5, 48), new T.MeshBasicMaterial({color:0xf3b64a, transparent:true, opacity:.18, fog:false}));
+  halo.position.set(-5, 2.4, -30.1); scene.add(halo);
+  // mar
+  var seg = o.small ? 40 : 70;
+  var seaG = new T.PlaneGeometry(80, 40, seg, Math.round(seg/2)); seaG.rotateX(-Math.PI/2);
+  var sea = new T.Mesh(seaG, new T.MeshStandardMaterial({color:0x1b5566, roughness:.28, metalness:.35, flatShading:true}));
+  sea.position.set(0, -0.05, -14); scene.add(sea);
+  var base = seaG.attributes.position.array.slice();
+  // terreno
+  var land = new T.Mesh(new T.BoxGeometry(34, 0.4, 16), new T.MeshStandardMaterial({color:0x183846, roughness:.9}));
+  land.position.set(0, -0.2, 4); scene.add(land);
+  // prédios (instanciados)
+  var cols = o.small ? 10 : 15, rows = o.small ? 6 : 8, count = cols*rows;
+  var geo = new T.BoxGeometry(1, 1, 1); geo.translate(0, .5, 0);
+  var mat = new T.MeshStandardMaterial({color:0xffffff, roughness:.55, metalness:.08, flatShading:true});
+  var city = new T.InstancedMesh(geo, mat, count);
+  var m = new T.Matrix4(), q = new T.Quaternion(), s = new T.Vector3(), p = new T.Vector3(), c = new T.Color();
+  var palette = [0xe9e2d0, 0xd8cdb4, 0xbfd8d2, 0xf1d7a8, 0x9fbfc0];
+  var hero = null, i = 0;
+  function rnd(a){ var x = Math.sin(a*127.1)*43758.5453; return x - Math.floor(x); }
+  for (var r=0; r<rows; r++) for (var k=0; k<cols; k++){
+    var x = (k - (cols-1)/2) * 1.55, z = -3 + r * 1.55;
+    var h = 0.4 + rnd(i+1) * (0.9 + r*0.4) + (Math.abs(x) < 3 && r > 3 ? 1.2 : 0);
+    var w = 0.8 + rnd(i+7)*0.45;
+    p.set(x + (rnd(i+3)-.5)*.3, 0, z); s.set(w, h, w*(0.8+rnd(i+9)*.4));
+    m.compose(p, q, s); city.setMatrixAt(i, m);
+    c.setHex(palette[Math.floor(rnd(i+5)*palette.length)]); city.setColorAt(i, c);
+    if (r === 2 && k === Math.floor(cols/2)+1) hero = {x:p.x, z:p.z, h:h, w:w};
+    i++;
+  }
+  scene.add(city);
+  // o "seu imóvel" em destaque + pino
+  var star = new T.Mesh(new T.BoxGeometry(hero.w+.05, hero.h+.02, hero.w+.05).translate(0,(hero.h+.02)/2,0), new T.MeshStandardMaterial({color:0xf3b64a, emissive:0xf3b64a, emissiveIntensity:.35, roughness:.4}));
+  star.position.set(hero.x, 0, hero.z); scene.add(star);
+  var pin = new T.Group();
+  var head = new T.Mesh(new T.SphereGeometry(.42, 24, 16), new T.MeshStandardMaterial({color:0xf3b64a, emissive:0xb06d12, emissiveIntensity:.4, roughness:.3}));
+  var tip = new T.Mesh(new T.ConeGeometry(.3, .8, 24), head.material); tip.rotation.x = Math.PI; tip.position.y = -.5;
+  var dot = new T.Mesh(new T.SphereGeometry(.16, 16, 12), new T.MeshBasicMaterial({color:0x0f2430})); dot.position.z = .32;
+  pin.add(head); pin.add(tip); pin.add(dot);
+  pin.position.set(hero.x, hero.h + 1.3, hero.z); scene.add(pin);
+  var ring = new T.Mesh(new T.RingGeometry(.6, .72, 40), new T.MeshBasicMaterial({color:0xf3b64a, transparent:true, opacity:.8, side:T.DoubleSide}));
+  ring.rotation.x = -Math.PI/2; ring.position.set(hero.x, hero.h + .03, hero.z); scene.add(ring);
+  var look = new T.Vector3(2.5, 1.2, -2);
+  return {
+    update: function(t, mouse, sk){
+      var a = Math.sin(t*0.08)*0.22 + mouse.x*0.25;
+      camera.position.x = 3 + Math.sin(a)*23;
+      camera.position.z = Math.cos(a)*23;
+      camera.position.y = 9.5 - mouse.y*1.2 + sk*4;
+      camera.lookAt(look);
+      var arr = seaG.attributes.position.array;
+      for (var j=0; j<arr.length; j+=3){ arr[j+1] = base[j+1] + Math.sin(base[j]*0.45 + t*1.1)*0.12 + Math.cos(base[j+2]*0.6 + t*0.8)*0.1; }
+      seaG.attributes.position.needsUpdate = true; seaG.computeVertexNormals();
+      pin.position.y = hero.h + 1.3 + Math.sin(t*2)*0.18; pin.rotation.y = t*0.9;
+      var pulse = (t*0.6)%1; ring.scale.setScalar(1 + pulse*2.2); ring.material.opacity = 0.8*(1-pulse);
+      star.material.emissiveIntensity = .3 + Math.sin(t*2)*.12;
+    }
+  };
+};
+
+</script>
+<script>
+/* ===== Base comum das vitrines SEVEN AI (agendamento + WhatsApp simulado + 3D) ===== */
+(function(){
+  "use strict";
+  var CFG = window.VITRINE;
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function $(s, r){ return (r||document).querySelector(s); }
+  function el(tag, cls, txt){ var e=document.createElement(tag); if(cls) e.className=cls; if(txt!=null) e.textContent=txt; return e; }
+
+  /* ---------- Rolagem suave dos botões de chamada ---------- */
+  document.querySelectorAll("[data-goto]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var t=document.getElementById(b.getAttribute("data-goto"));
+      if(t) t.scrollIntoView({behavior: reduce?"auto":"smooth", block:"start"});
+    });
+  });
+
+  /* ---------- Agendamento ---------- */
+  var LIVE = !!(CFG.intake && CFG.intake.url && /\.github\.io$/.test(location.hostname));
+  if(LIVE){ var cw=document.getElementById("bk-consent-wrap"); if(cw) cw.hidden=false; }
+  var bk = { step:0, service:null, extra:null, date:null, time:null, name:"", phone:"" };
+  var root = $("#agenda");
+  var steps = root.querySelectorAll(".bk-step");
+  var dots = root.querySelectorAll(".bk-progress li");
+  var DAYS = ["dom","seg","ter","qua","qui","sex","sáb"];
+  var MONTHS = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
+
+  function show(i){
+    bk.step=i;
+    steps.forEach(function(s,k){ s.hidden = k!==i; });
+    dots.forEach(function(d,k){ d.classList.toggle("on", k<=i); d.setAttribute("aria-current", k===i?"step":"false"); });
+    var f = steps[i].querySelector("button, input");
+    if(f && bk.touched) f.focus({preventScroll:true});
+  }
+
+  // passo 1: serviços
+  var svcBox = $("#bk-services");
+  CFG.services.forEach(function(s){
+    var b=el("button","bk-opt"); b.type="button";
+    var t=el("span","bk-opt-t",s.name); var m=el("span","bk-opt-m",s.meta);
+    b.appendChild(t); b.appendChild(m);
+    b.addEventListener("click",function(){
+      bk.touched=true; bk.service=s;
+      svcBox.querySelectorAll(".bk-opt").forEach(function(x){x.classList.remove("sel");}); b.classList.add("sel");
+      show(CFG.extra ? 1 : 2);
+    });
+    svcBox.appendChild(b);
+  });
+
+  // passo 2 (opcional): campo do nicho (porte do pet, imóvel...)
+  if(CFG.extra){
+    $("#bk-extra-label").textContent = CFG.extra.label;
+    var exBox=$("#bk-extra");
+    CFG.extra.options.forEach(function(o){
+      var b=el("button","bk-chip",o); b.type="button";
+      b.addEventListener("click",function(){ bk.extra=o; exBox.querySelectorAll(".bk-chip").forEach(function(x){x.classList.remove("sel");}); b.classList.add("sel"); show(2); });
+      exBox.appendChild(b);
+    });
+  }
+
+  // passo 3: data
+  var dBox=$("#bk-dates"), tBox=$("#bk-times");
+  var today=new Date(); today.setHours(0,0,0,0);
+  var n=0, d=new Date(today);
+  while(n<12){
+    d.setDate(d.getDate()+1);
+    if(CFG.closed.indexOf(d.getDay())>-1) continue;
+    (function(day){
+      var b=el("button","bk-day"); b.type="button";
+      b.appendChild(el("span","bk-day-w",DAYS[day.getDay()]));
+      b.appendChild(el("span","bk-day-n",String(day.getDate())));
+      b.appendChild(el("span","bk-day-m",MONTHS[day.getMonth()]));
+      b.addEventListener("click",function(){
+        bk.date=day; dBox.querySelectorAll(".bk-day").forEach(function(x){x.classList.remove("sel");}); b.classList.add("sel");
+        renderTimes(); show(3);
+      });
+      dBox.appendChild(b);
+    })(new Date(d));
+    n++;
+  }
+  function hash(s){ var h=0; for(var i=0;i<s.length;i++){ h=(h*31+s.charCodeAt(i))|0; } return Math.abs(h); }
+  function renderTimes(){
+    tBox.innerHTML="";
+    var key=bk.date.toDateString();
+    CFG.slots.forEach(function(t,i){
+      var busy = (hash(key+t+(bk.service?bk.service.name:""))%10)<4;
+      var b=el("button","bk-time"+(busy?" busy":""),t); b.type="button";
+      if(busy){ b.disabled=true; b.setAttribute("aria-label",t+" ocupado"); b.title="Ocupado"; }
+      b.addEventListener("click",function(){ bk.time=t; tBox.querySelectorAll(".bk-time").forEach(function(x){x.classList.remove("sel");}); b.classList.add("sel"); show(4); });
+      tBox.appendChild(b);
+    });
+    $("#bk-date-label").textContent = DAYS[bk.date.getDay()]+", "+bk.date.getDate()+" de "+MONTHS[bk.date.getMonth()];
+  }
+
+  // passo 5: dados
+  $("#bk-form").addEventListener("submit",function(e){
+    e.preventDefault();
+    var nm=$("#bk-name").value.trim(), ph=$("#bk-phone").value.replace(/\D/g,"");
+    var err=$("#bk-err");
+    if(nm.length<2){ err.textContent="Escreva seu nome para a gente saber como te chamar."; $("#bk-name").focus(); return; }
+    if(ph.length<10){ err.textContent="O telefone precisa ter DDD e número, por exemplo 12 99999-0000."; $("#bk-phone").focus(); return; }
+    err.textContent=""; bk.name=nm.split(" ")[0];
+    var resumo = bk.service.name + (bk.extra? " · "+bk.extra : "") + " — " + DAYS[bk.date.getDay()]+", "+bk.date.getDate()+" de "+MONTHS[bk.date.getMonth()]+" às "+bk.time;
+    function done(note){
+      $("#bk-sum-name").textContent=bk.name; $("#bk-sum").textContent=resumo;
+      if(note) $("#bk-done-note").textContent=note;
+      show(5); var ck=$("#bk-check"); ck.classList.remove("draw"); void ck.getBoundingClientRect(); ck.classList.add("draw");
+    }
+    if(!LIVE){ done(); return; }
+    var btn=e.submitter||$("#bk-form button[type=submit]"); btn.disabled=true; btn.textContent="Enviando…";
+    fetch(CFG.intake.url,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({
+      tenant:CFG.intake.tenant, nome:nm, telefone:ph, servico:bk.service.name, detalhe:bk.extra||"",
+      data:bk.date.toISOString().slice(0,10), horario:bk.time, pagina:location.pathname,
+      consentimento:$("#bk-consent").checked, website:$("#bk-website").value })})
+    .then(function(r){ return r.json().catch(function(){return {};}).then(function(j){ return {status:r.status, j:j}; }); })
+    .then(function(x){
+      btn.disabled=false; btn.textContent="Confirmar horário";
+      if(x.j && x.j.ok){ done("Pedido recebido. Ele já está no CRM da demonstração" + (x.j.followup_scheduled? " e o retorno pelo WhatsApp ficou agendado para amanhã às 10h." : ".")); }
+      else if(x.status===429){ err.textContent="Muitos pedidos seguidos. Espere alguns minutos e tente de novo."; }
+      else { err.textContent="Não conseguimos registrar agora. Confira nome e telefone e tente de novo."; }
+    })
+    .catch(function(){ btn.disabled=false; btn.textContent="Confirmar horário"; err.textContent="Sem conexão com o servidor. Tente de novo em instantes."; });
+  });
+  $("#bk-phone").addEventListener("input",function(e){
+    var v=e.target.value.replace(/\D/g,"").slice(0,11);
+    if(v.length>6) v="("+v.slice(0,2)+") "+v.slice(2,v.length-4)+"-"+v.slice(-4);
+    else if(v.length>2) v="("+v.slice(0,2)+") "+v.slice(2);
+    e.target.value=v;
+  });
+  root.querySelectorAll("[data-back]").forEach(function(b){
+    b.addEventListener("click",function(){
+      var to=bk.step-1; if(to===1 && !CFG.extra) to=0; show(Math.max(0,to));
+    });
+  });
+  $("#bk-restart").addEventListener("click",function(){
+    bk={step:0,touched:true}; root.querySelectorAll(".sel").forEach(function(x){x.classList.remove("sel");});
+    $("#bk-form").reset(); show(0);
+  });
+  show(0);
+
+  /* ---------- WhatsApp simulado ---------- */
+  var chat=$("#chat-body"), playing=false, played=false;
+  function bubble(m){
+    var b=el("div","msg "+(m.f==="c"?"in":"out"));
+    if(m.sys){ b=el("div","msg sys"); }
+    var p=el("p",null,m.t); b.appendChild(p);
+    if(!m.sys){ var tm=el("span","msg-time",m.h||""); if(m.f!=="c") tm.textContent=(m.h||"")+" ✓✓"; b.appendChild(tm); }
+    return b;
+  }
+  function renderAll(){ chat.innerHTML=""; CFG.chat.forEach(function(m){ chat.appendChild(bubble(m)); }); }
+  function play(){
+    if(playing) return; playing=true; played=true;
+    chat.innerHTML=""; var i=0;
+    function next(){
+      if(i>=CFG.chat.length){ playing=false; return; }
+      var m=CFG.chat[i++];
+      if(m.f!=="c" && !m.sys){
+        var ty=el("div","msg out typing"); ty.innerHTML="<i></i><i></i><i></i>"; chat.appendChild(ty); chat.scrollTop=chat.scrollHeight;
+        setTimeout(function(){ ty.remove(); chat.appendChild(bubble(m)); chat.scrollTop=chat.scrollHeight; setTimeout(next,700); }, Math.min(1600, 500+m.t.length*12));
+      } else { chat.appendChild(bubble(m)); chat.scrollTop=chat.scrollHeight; setTimeout(next, m.sys?900:1100); }
+    }
+    next();
+  }
+  renderAll();
+  $("#chat-play").addEventListener("click",function(){ playing=false; play(); });
+  if(!reduce && "IntersectionObserver" in window){
+    var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting && !played){ play(); } }); },{threshold:.45});
+    io.observe($("#whats"));
+  }
+
+  /* ---------- Copiar contato ---------- */
+  var cp=$("#copy-mail");
+  if(cp) cp.addEventListener("click",function(){
+    var t=$("#mail-text").textContent, msg=$("#copy-ok");
+    function sel(){ var r=document.createRange(); r.selectNodeContents($("#mail-text")); var s=getSelection(); s.removeAllRanges(); s.addRange(r); msg.textContent="Endereço selecionado. Use Ctrl+C para copiar."; }
+    try{ navigator.clipboard.writeText(t).then(function(){ msg.textContent="E-mail copiado."; }, sel); }catch(e){ sel(); }
+  });
+
+  /* ---------- Pequenas interações por nicho ---------- */
+  document.querySelectorAll(".seg").forEach(function(g){
+    g.querySelectorAll("button").forEach(function(b){
+      b.addEventListener("click",function(){ g.querySelectorAll("button").forEach(function(x){ x.setAttribute("aria-pressed", x===b?"true":"false"); }); });
+    });
+  });
+  var sw=$("#swap");
+  if(sw){
+    if(reduce || !("IntersectionObserver" in window)) sw.classList.add("done");
+    else new IntersectionObserver(function(es,ob){ if(es[0].isIntersecting){ setTimeout(function(){ sw.classList.add("done"); },1400); ob.disconnect(); } },{threshold:.6}).observe(sw);
+  }
+
+  /* ---------- Cena 3D ---------- */
+  var hero=$(".hero"), canvas=$("#scene");
+  function fallback(){ hero.classList.add("no3d"); if(canvas) canvas.remove(); }
+  function webgl(){ try{ var c=document.createElement("canvas"); return !!(window.WebGLRenderingContext && (c.getContext("webgl")||c.getContext("experimental-webgl"))); }catch(e){ return false; } }
+  if(!window.THREE || !canvas || !webgl() || typeof window.buildScene!=="function"){ fallback(); return; }
+  try{
+    var T=window.THREE, small=window.innerWidth<700;
+    var renderer=new T.WebGLRenderer({canvas:canvas, antialias:!small, alpha:true});
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio||1, 2));
+    var scene=new T.Scene();
+    var camera=new T.PerspectiveCamera(40,1,0.1,200);
+    var api=window.buildScene(T, scene, camera, {small:small});
+    var mouse={x:0,y:0,tx:0,ty:0}, scrollK=0, visible=true, running=true, t0=performance.now();
+    function size(){ var w=hero.clientWidth, h=hero.clientHeight; renderer.setSize(w,h,false); camera.aspect=w/h; camera.updateProjectionMatrix(); if(api.resize) api.resize(w,h); }
+    window.addEventListener("resize",size); size();
+    function mv(x,y){ var r=hero.getBoundingClientRect(); mouse.tx=((x-r.left)/r.width)*2-1; mouse.ty=((y-r.top)/r.height)*2-1; }
+    hero.addEventListener("pointermove",function(e){ mv(e.clientX,e.clientY); });
+    hero.addEventListener("touchmove",function(e){ if(e.touches[0]) mv(e.touches[0].clientX,e.touches[0].clientY); },{passive:true});
+    window.addEventListener("scroll",function(){ scrollK=Math.min(1, window.scrollY/Math.max(1,hero.clientHeight)); },{passive:true});
+    document.addEventListener("visibilitychange",function(){ running=!document.hidden; if(running) loop(); });
+    if("IntersectionObserver" in window){ new IntersectionObserver(function(es){ visible=es[0].isIntersecting; if(visible) loop(); }).observe(hero); }
+    var raf=0;
+    function frame(now){
+      raf=0;
+      mouse.x+=(mouse.tx-mouse.x)*0.05; mouse.y+=(mouse.ty-mouse.y)*0.05;
+      api.update((now-t0)/1000, mouse, scrollK);
+      renderer.render(scene,camera);
+      if(!reduce && running && visible) raf=requestAnimationFrame(frame);
+    }
+    function loop(){ if(!raf) raf=requestAnimationFrame(frame); }
+    hero.classList.add("has3d");
+    loop();
+  }catch(e){ fallback(); }
+})();
+
+</script>
+
+</body>
+</html>

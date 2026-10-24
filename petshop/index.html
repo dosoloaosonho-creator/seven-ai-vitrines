@@ -1,0 +1,624 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Seu Pet Shop Banho & Tosa</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Demonstração SEVEN AI: site de pet shop com agendamento por porte, táxi dog e Funcionário Digital no WhatsApp.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap">
+<style>
+
+/* Layout: título à esquerda, pata 3D com bolhas de banho à direita; blocos claros arredondados, tabela de preço por porte */
+:root{
+  --bg:#f4f2ff; --surface:#ffffff; --fg:#2a2150; --muted:#6c6492; --line:#e1dcf6;
+  --accent:#ff6a4d; --accent-ink:#ffffff; --accent2:#1fb5a3; --danger:#d93a20;
+  --band-bg:#2a2150; --band-fg:#f4f2ff;
+  --display:"Fredoka", "Trebuchet MS", system-ui, sans-serif; --display-w:600;
+  --body:"Nunito", "Segoe UI", system-ui, sans-serif;
+  --card-r:28px; --card-shadow:0 2px 0 #e7e2fb, 0 22px 50px -28px rgba(42,33,80,.35);
+  --fallback:linear-gradient(135deg,#f4f2ff,#ffd9cf 45%,#c9f1eb);
+  color-scheme:light;
+}
+/* ===== Base comum — cada vitrine define os tokens no :root ===== */
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} *{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important} }
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+h1,h2,h3{font-family:var(--display);line-height:1.08;text-wrap:balance;margin:0;font-weight:var(--display-w,600)}
+p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:6px}
+.wrap{max-width:1160px;margin:0 auto;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+section{padding-block:clamp(64px,9vw,112px)}
+.sec-head{display:grid;gap:12px;max-width:640px;margin-bottom:clamp(28px,4vw,44px)}
+.sec-head h2{font-size:clamp(30px,4.4vw,48px)}
+.sec-head p{color:var(--muted);font-size:17px}
+
+/* faixa de demonstração */
+.demo-band{background:var(--band-bg);color:var(--band-fg);font-size:13px;line-height:1.4;position:relative;z-index:3}
+.demo-band .wrap{padding-block:9px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.demo-band b{font-weight:700}
+
+/* hero */
+.hero{position:relative;overflow:hidden;isolation:isolate}
+#scene{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:-1}
+.hero.no3d{background:var(--fallback);background-size:300% 300%;animation:fb 16s ease-in-out infinite alternate}
+@keyframes fb{from{background-position:0% 30%}to{background-position:100% 70%}}
+
+/* botões */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;border:0;border-radius:var(--btn-r,999px);padding:15px 26px;font-weight:700;font-size:16px;text-decoration:none;transition:transform .18s ease, box-shadow .18s ease, background .18s ease}
+.btn:active{transform:translateY(1px) scale(.98)}
+.btn-main{background:var(--accent);color:var(--accent-ink);box-shadow:0 10px 30px -10px var(--accent)}
+.btn-main:hover{transform:translateY(-2px);box-shadow:0 16px 36px -12px var(--accent)}
+.btn-ghost{background:transparent;color:inherit;box-shadow:inset 0 0 0 1.5px currentColor}
+.btn-ghost:hover{background:color-mix(in srgb, currentColor 8%, transparent)}
+
+/* ===== Agendamento ===== */
+.bk{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:clamp(24px,4vw,56px);align-items:start}
+@media (max-width:860px){ .bk{grid-template-columns:1fr} }
+.bk-card{background:var(--surface);border-radius:var(--card-r,22px);padding:clamp(20px,3vw,32px);box-shadow:var(--card-shadow);min-width:0}
+.bk-progress{list-style:none;display:flex;gap:6px;padding:0;margin:0 0 22px}
+.bk-progress li{flex:1;height:5px;border-radius:9px;background:var(--line);transition:background .3s}
+.bk-progress li.on{background:var(--accent)}
+.bk-step h3{font-size:22px;margin-bottom:6px}
+.bk-step .hint{color:var(--muted);font-size:14px;margin-bottom:18px}
+.bk-opts{display:grid;gap:10px}
+.bk-opt{display:flex;justify-content:space-between;align-items:center;gap:14px;text-align:left;background:var(--bg);border:1.5px solid var(--line);border-radius:14px;padding:14px 16px;transition:border-color .15s, transform .15s, background .15s}
+.bk-opt:hover{border-color:var(--accent);transform:translateX(3px)}
+.bk-opt.sel{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%, var(--bg))}
+.bk-opt-t{font-weight:700}
+.bk-opt-m{color:var(--muted);font-size:13px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.bk-chips{display:flex;flex-wrap:wrap;gap:10px}
+.bk-chip{border:1.5px solid var(--line);background:var(--bg);border-radius:999px;padding:10px 18px;font-weight:600;transition:border-color .15s, background .15s}
+.bk-chip:hover,.bk-chip.sel{border-color:var(--accent)}
+.bk-chip.sel{background:var(--accent);color:var(--accent-ink)}
+.bk-days{display:grid;grid-template-columns:repeat(auto-fill,minmax(68px,1fr));gap:8px}
+.bk-day{display:grid;justify-items:center;gap:0;border:1.5px solid var(--line);background:var(--bg);border-radius:14px;padding:10px 4px;transition:border-color .15s, transform .15s}
+.bk-day:hover{border-color:var(--accent);transform:translateY(-2px)}
+.bk-day.sel{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.bk-day-w,.bk-day-m{font-size:12px;opacity:.75}
+.bk-day-n{font-size:22px;font-weight:800;font-family:var(--display);font-variant-numeric:tabular-nums}
+.bk-times{display:grid;grid-template-columns:repeat(auto-fill,minmax(82px,1fr));gap:8px}
+.bk-time{border:1.5px solid var(--line);background:var(--bg);border-radius:12px;padding:11px 6px;font-weight:700;font-variant-numeric:tabular-nums;transition:border-color .15s}
+.bk-time:hover:not(:disabled){border-color:var(--accent)}
+.bk-time.sel{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.bk-time.busy{opacity:.38;text-decoration:line-through;cursor:not-allowed}
+.bk-form{display:grid;gap:14px}
+.bk-form label{display:grid;gap:6px;font-weight:600;font-size:14px}
+.bk-form input{font:inherit;color:var(--fg);background:var(--bg);border:1.5px solid var(--line);border-radius:12px;padding:13px 14px;width:100%}
+.bk-form input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 22%, transparent)}
+.bk-err{color:var(--danger);font-size:14px;min-height:1.2em}
+.bk-nav{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:18px;flex-wrap:wrap}
+.bk-back{background:none;border:0;color:var(--muted);font-weight:600;padding:8px 0}
+.bk-back:hover{color:var(--fg)}
+.bk-done{display:grid;justify-items:center;text-align:center;gap:12px;padding-block:10px}
+.bk-done svg{width:84px;height:84px}
+.bk-done circle{fill:color-mix(in srgb,var(--accent) 14%, transparent)}
+.bk-done path{fill:none;stroke:var(--accent);stroke-width:6;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:60;stroke-dashoffset:0}
+.bk-done svg.draw path{animation:draw .7s .1s ease-out both}
+@keyframes draw{from{stroke-dashoffset:60}to{stroke-dashoffset:0}}
+.bk-done .sum{font-weight:700;font-size:18px}
+.bk-done .note{color:var(--muted);font-size:14px;max-width:38ch}
+.bk-side{display:grid;gap:18px;min-width:0}
+.bk-side ul{list-style:none;padding:0;margin:0;display:grid;gap:14px}
+.bk-side li{display:grid;grid-template-columns:28px minmax(0,1fr);gap:12px;align-items:start}
+.bk-side li svg{width:26px;height:26px;color:var(--accent)}
+.bk-side li b{display:block}
+.bk-side li span{color:var(--muted);font-size:15px}
+
+/* ===== WhatsApp simulado ===== */
+.wa{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:clamp(28px,5vw,72px);align-items:center}
+@media (max-width:860px){ .wa{grid-template-columns:1fr} .phone{justify-self:center} }
+.wa-copy{display:grid;gap:18px;min-width:0}
+.wa-copy ul{margin:0;padding-left:20px;display:grid;gap:8px;color:var(--muted)}
+.phone{width:min(360px,100%);background:#0f1a17;border-radius:42px;padding:12px;box-shadow:0 40px 80px -30px rgba(0,0,0,.45), inset 0 0 0 2px rgba(255,255,255,.08)}
+.phone-top{display:flex;align-items:center;gap:10px;background:#1f2c27;color:#e9edef;border-radius:30px 30px 0 0;padding:16px 16px 12px}
+.phone-top .av{width:36px;height:36px;border-radius:50%;background:var(--accent);display:grid;place-items:center;color:var(--accent-ink);font-weight:800;font-size:14px}
+.phone-top b{display:block;font-size:15px;line-height:1.2}
+.phone-top small{font-size:12px;color:#8fd3a8}
+#chat-body{height:430px;overflow-y:auto;background:#e8e2d9;background-image:radial-gradient(rgba(0,0,0,.035) 1px, transparent 1px);background-size:14px 14px;padding:14px 10px;display:flex;flex-direction:column;gap:6px;border-radius:0 0 30px 30px;scroll-behavior:smooth}
+.msg{max-width:84%;padding:7px 10px 5px;border-radius:10px;font-size:14px;line-height:1.4;color:#111b21;box-shadow:0 1px .5px rgba(0,0,0,.13);animation:pop .25s ease-out}
+.msg p{white-space:pre-line}
+.msg.in{align-self:flex-start;background:#fff;border-top-left-radius:2px}
+.msg.out{align-self:flex-end;background:#d9fdd3;border-top-right-radius:2px}
+.msg.sys{align-self:center;background:#fff6c5;color:#54470e;font-size:12px;text-align:center;max-width:92%;box-shadow:none}
+.msg-time{display:block;text-align:right;font-size:10.5px;color:#667781;margin-top:2px}
+.typing{display:flex;gap:4px;padding:12px 14px}
+.typing i{width:7px;height:7px;border-radius:50%;background:#8696a0;animation:blink 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes blink{0%,100%{opacity:.3;transform:translateY(0)}50%{opacity:1;transform:translateY(-3px)}}
+@keyframes pop{from{opacity:0;transform:translateY(6px) scale(.97)}to{opacity:1;transform:none}}
+
+/* ===== Como funciona ===== */
+.how{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(16px,3vw,32px);counter-reset:how}
+@media (max-width:760px){ .how{grid-template-columns:1fr} }
+.how li{list-style:none;display:grid;gap:10px;counter-increment:how;min-width:0}
+.how li::before{content:counter(how);font-family:var(--display);font-size:44px;line-height:1;color:var(--accent);font-weight:700}
+.how h3{font-size:21px}
+.how p{color:var(--muted)}
+ol.how{padding:0;margin:0}
+
+/* ===== Contato / rodapé ===== */
+.final{display:grid;gap:22px;justify-items:start;max-width:720px}
+.final h2{font-size:clamp(32px,5vw,56px)}
+.final p{color:var(--muted);font-size:17px}
+.contact{display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:var(--surface);border-radius:16px;padding:14px 16px;box-shadow:var(--card-shadow);max-width:100%}
+.contact code{font-family:var(--body);font-weight:700;font-size:16px;user-select:all;overflow-wrap:anywhere}
+.contact button{border:0;background:var(--accent);color:var(--accent-ink);font-weight:700;border-radius:10px;padding:8px 14px}
+#copy-ok{font-size:13px;color:var(--muted);min-height:1em}
+footer{border-top:1px solid var(--line);font-size:14px;color:var(--muted)}
+footer .wrap{padding-block:26px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+.bk-hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.bk-consent{display:flex!important;grid-template-columns:none;gap:10px;align-items:flex-start;font-weight:500!important;color:var(--muted);font-size:13px!important}
+.bk-consent input{width:auto!important;margin-top:3px}
+
+
+.hero{min-height:clamp(560px,80vh,720px);display:flex;align-items:center;background:radial-gradient(70% 80% at 80% 40%, #ffe3da 0%, transparent 70%), radial-gradient(60% 70% at 95% 90%, #d2f4ef 0%, transparent 70%)}
+.hero > .wrap{width:100%;display:grid;gap:24px;padding-block:96px 64px}
+.hero-copy{display:grid;gap:22px;max-width:560px}
+.brand{position:absolute;top:22px;left:0;right:0;z-index:2}
+.brand .wrap{display:flex;justify-content:space-between;align-items:center;padding-block:0}
+.logo{font-family:var(--display);font-weight:700;font-size:22px;display:flex;gap:10px;align-items:center}
+.logo i{width:34px;height:34px;border-radius:50%;background:var(--accent);display:grid;place-items:center;color:#fff;font-style:normal;font-size:18px}
+.hero h1{font-size:clamp(42px,6.6vw,82px);letter-spacing:-.02em;line-height:1}
+.hero h1 span{display:block;color:var(--accent)}
+.hero .lead{font-size:clamp(17px,1.6vw,20px);color:var(--muted);max-width:44ch}
+.hero-cta{display:flex;flex-wrap:wrap;gap:12px}
+.badges{display:flex;flex-wrap:wrap;gap:8px}
+.badges span{background:var(--surface);border-radius:999px;padding:7px 14px;font-weight:700;font-size:14px;box-shadow:0 2px 0 var(--line)}
+@media (max-width:760px){ .hero{align-items:flex-end} .hero > .wrap{padding-top:300px} }
+.tabela-wrap{overflow-x:auto;background:var(--surface);border-radius:var(--card-r);box-shadow:var(--card-shadow)}
+table{border-collapse:collapse;width:100%;min-width:560px;font-variant-numeric:tabular-nums}
+th,td{padding:16px 18px;text-align:left;border-bottom:1px solid var(--line)}
+thead th{font-family:var(--display);font-weight:600;font-size:15px;color:var(--muted)}
+thead th small{display:block;font-family:var(--body);font-weight:600;font-size:12px}
+tbody th{font-weight:800}
+tbody th small{display:block;color:var(--muted);font-weight:600;font-size:13px}
+tbody tr:last-child th,tbody tr:last-child td{border-bottom:0}
+td{font-weight:700}
+.tabela-note{color:var(--muted);font-size:14px;margin-top:14px}
+.lembra{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+@media (max-width:900px){ .lembra{grid-template-columns:repeat(2,minmax(0,1fr))} }
+@media (max-width:480px){ .lembra{grid-template-columns:1fr} }
+.lem{background:var(--surface);border-radius:24px;padding:22px;display:grid;gap:8px;box-shadow:var(--card-shadow);min-width:0}
+.lem b{font-family:var(--display);font-size:30px;color:var(--accent2);line-height:1}
+.lem h3{font-size:19px}
+.lem p{color:var(--muted);font-size:15px}
+.whats{background:#ebe7ff}
+
+</style>
+</head>
+<body>
+
+<div class="demo-band"><div class="wrap"><b>Demonstração SEVEN AI</b> <span>Modelo de site para pet shop e clínica veterinária. Preços, nomes e horários são ilustrativos.</span></div></div>
+
+
+<header class="hero">
+  <canvas id="scene" aria-hidden="true"></canvas>
+  <div class="brand"><div class="wrap"><span class="logo"><i>🐾</i>Seu Pet Shop</span><button class="btn btn-ghost" type="button" data-goto="agenda" style="padding:10px 18px">Agendar</button></div></div>
+  <div class="wrap">
+    <div class="hero-copy">
+      <h1>Banho, tosa e vet <span>sem esperar resposta.</span></h1>
+      <p class="lead">Marque pelo site ou pelo WhatsApp a qualquer hora. A gente busca, cuida, manda foto quando fica pronto e lembra você do próximo banho.</p>
+      <div class="hero-cta"><button class="btn btn-main" type="button" data-goto="agenda">Agendar banho</button><button class="btn btn-ghost" type="button" data-goto="precos">Ver preços</button></div>
+      <div class="badges"><span>Táxi dog</span><span>Foto quando fica pronto</span><span>Lembrete de vacina</span></div>
+    </div>
+  </div>
+</header>
+
+
+
+<section id="precos">
+  <div class="wrap">
+    <div class="sec-head"><h2>Preço por porte, sem surpresa</h2><p>O Funcionário Digital consulta esta tabela antes de responder. Valores de exemplo.</p></div>
+    <div class="tabela-wrap">
+      <table>
+        <thead><tr><th scope="col">Serviço</th><th scope="col">P<small>até 10 kg</small></th><th scope="col">M<small>10 a 20 kg</small></th><th scope="col">G<small>20 a 35 kg</small></th><th scope="col">GG<small>acima de 35 kg</small></th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Banho<small>1h · secagem e perfume</small></th><td>R$ 55</td><td>R$ 70</td><td>R$ 90</td><td>R$ 120</td></tr>
+          <tr><th scope="row">Banho e tosa higiênica<small>1h20</small></th><td>R$ 70</td><td>R$ 85</td><td>R$ 110</td><td>R$ 140</td></tr>
+          <tr><th scope="row">Tosa completa<small>2h · máquina ou tesoura</small></th><td>R$ 95</td><td>R$ 120</td><td>R$ 150</td><td>R$ 190</td></tr>
+          <tr><th scope="row">Hidratação de pelagem<small>adicional · 20 min</small></th><td>R$ 25</td><td>R$ 30</td><td>R$ 40</td><td>R$ 50</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="tabela-note">Pelos com nós podem ter adicional, avaliado na chegada. Táxi dog: R$ 15 por trecho até 5 km.</p>
+  </div>
+</section>
+
+
+<section id="agenda">
+  <div class="wrap">
+    <div class="sec-head"><h2>Agende em menos de um minuto</h2><p>Escolha o serviço, o porte e um horário livre. No WhatsApp é o mesmo caminho, só que conversando.</p></div>
+    <div class="bk">
+      <div class="bk-side">
+        <ul><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><div><b>O porte define tempo e preço</b><span>Um shih-tzu e um golden não ocupam o mesmo tempo na mesa de banho. A agenda já considera isso.</span></div></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><div><b>Busca e entrega no endereço</b><span>O táxi dog entra no mesmo agendamento, com horário de busca combinado.</span></div></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><div><b>Foto quando fica pronto</b><span>O tutor recebe a foto do pet arrumado e o aviso de saída para entrega.</span></div></li></ul>
+      </div>
+      <div class="bk-card" aria-live="polite">
+        <ol class="bk-progress" aria-label="Etapas do agendamento"><li></li><li></li><li></li><li></li><li></li><li></li></ol>
+        <div class="bk-step">
+          <h3>O que o seu pet precisa?</h3>
+          <p class="hint">Valores e durações de exemplo.</p>
+          <div class="bk-opts" id="bk-services"></div>
+        </div>
+        
+      <div class="bk-step" hidden>
+        <h3 id="bk-extra-label"></h3>
+        <p class="hint">Isso muda a duração e o preço.</p>
+        <div class="bk-chips" id="bk-extra"></div>
+        <div class="bk-nav"><button class="bk-back" type="button" data-back>Voltar</button></div>
+      </div>
+        <div class="bk-step" hidden>
+          <h3>Qual dia fica melhor?</h3>
+          <p class="hint">Mostramos só os dias com atendimento.</p>
+          <div class="bk-days" id="bk-dates"></div>
+          <div class="bk-nav"><button class="bk-back" type="button" data-back>Voltar</button></div>
+        </div>
+        <div class="bk-step" hidden>
+          <h3>Horários livres</h3>
+          <p class="hint" id="bk-date-label"></p>
+          <div class="bk-times" id="bk-times"></div>
+          <div class="bk-nav"><button class="bk-back" type="button" data-back>Voltar</button></div>
+        </div>
+        <div class="bk-step" hidden>
+          <h3>Para quem é o horário?</h3>
+          <p class="hint">Usamos o telefone só para confirmar e lembrar você.</p>
+          <form class="bk-form" id="bk-form" novalidate>
+            <label for="bk-name">Seu nome<input id="bk-name" name="nome" autocomplete="name" placeholder="Ex.: Mariana Souza"></label>
+            <label for="bk-phone">WhatsApp<input id="bk-phone" name="tel" inputmode="tel" autocomplete="tel" placeholder="(12) 99999-0000"></label>
+            <label class="bk-hp" aria-hidden="true">Site<input id="bk-website" name="website" tabindex="-1" autocomplete="off"></label>
+            <label class="bk-consent" id="bk-consent-wrap" hidden><input type="checkbox" id="bk-consent"> Aceito receber a confirmação e um retorno pelo WhatsApp. Esta página é uma demonstração da SEVEN AI; seus dados vão para o CRM de demonstração da SEVEN AI e não são compartilhados.</label>
+            <p class="bk-err" id="bk-err" role="alert"></p>
+            <div class="bk-nav"><button class="bk-back" type="button" data-back>Voltar</button><button class="btn btn-main" type="submit">Confirmar horário</button></div>
+          </form>
+        </div>
+        <div class="bk-step" hidden>
+          <div class="bk-done">
+            <svg id="bk-check" viewBox="0 0 84 84" aria-hidden="true"><circle cx="42" cy="42" r="40"/><path d="M26 43l11 11 21-23"/></svg>
+            <h3>Pronto, <span id="bk-sum-name"></span>!</h3>
+            <p class="sum" id="bk-sum"></p>
+            <p class="note" id="bk-done-note">Você recebe a confirmação no WhatsApp e, quando o banho terminar, uma foto do seu pet. Esta é uma demonstração: nada foi enviado e os dados somem ao recarregar a página.</p>
+            <button class="btn btn-ghost" type="button" id="bk-restart">Fazer outro agendamento</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="whats" class="whats">
+  <div class="wrap wa">
+    <div class="wa-copy">
+      <h2 style="font-size:clamp(30px,4.4vw,48px)">O WhatsApp que não deixa tutor esperando</h2>
+      <p style="color:var(--muted);font-size:17px">Pet shop perde cliente quando demora a responder no sábado de manhã. O Funcionário Digital responde, marca, confirma e lembra, enquanto a equipe cuida dos bichos.</p>
+      <ul><li>Calcula o preço pelo porte que o tutor informa</li><li>Marca busca e entrega junto com o banho</li><li>Avisa quando o pet está pronto</li><li>Lembra do próximo banho e das vacinas sem ninguém da equipe precisar ligar</li></ul>
+      <div><button class="btn btn-ghost" type="button" id="chat-play">Ver a conversa acontecendo</button></div>
+    </div>
+    <div class="phone" role="img" aria-label="Simulação de conversa no WhatsApp com o Funcionário Digital">
+      <div class="phone-top"><span class="av">🐾</span><div><b>Seu Pet Shop</b><small>Funcionário Digital · online 24h</small></div></div>
+      <div id="chat-body"></div>
+    </div>
+  </div>
+</section>
+
+
+<section id="lembretes">
+  <div class="wrap">
+    <div class="sec-head"><h2>Cliente que volta sozinho</h2><p>O dinheiro do pet shop está no retorno. O Funcionário Digital guarda a data de cada serviço e chama o tutor na hora certa.</p></div>
+    <div class="lembra">
+      <div class="lem"><b>15 dias</b><h3>Próximo banho</h3><p>Oferece o mesmo horário da última vez, que é o que o tutor costuma aceitar.</p></div>
+      <div class="lem"><b>1 ano</b><h3>Vacina V10 e antirrábica</h3><p>Avisa um mês antes e já sugere o horário com a veterinária.</p></div>
+      <div class="lem"><b>3 meses</b><h3>Vermífugo e antipulgas</h3><p>Lembra a dose e pergunta se quer retirar na loja ou receber em casa.</p></div>
+      <div class="lem"><b>No dia</b><h3>Aniversário do pet</h3><p>Manda os parabéns com um mimo para usar no próximo banho, se o pet shop quiser oferecer.</p></div>
+    </div>
+  </div>
+</section>
+
+
+<section id="como">
+  <div class="wrap">
+    <div class="sec-head"><h2>Como funciona na sua empresa</h2><p>Do primeiro contato até a operação rodando sozinha.</p></div>
+    <ol class="how"><li><h3>Sua tabela e sua agenda</h3><p>Serviços, preços por porte, horários da equipe e área do táxi dog entram no sistema.</p></li><li><h3>Seu WhatsApp atendendo</h3><p>Ligamos o Funcionário Digital no número do pet shop e testamos com você antes de atender tutores.</p></li><li><h3>Retorno no automático</h3><p>Cada atendimento gera o lembrete do próximo banho, vacina ou vermífugo.</p></li></ol>
+  </div>
+</section>
+
+<section id="contato" class="contato">
+  <div class="wrap final">
+    <h2>Quer isso no seu pet shop?</h2>
+    <p>A SEVEN AI monta o Funcionário Digital com a sua tabela, sua equipe e seus horários. Esta página é um modelo; a sua fica com a sua marca.</p>
+    <div class="contact"><code id="mail-text">dosoloaosonho@gmail.com</code><button type="button" id="copy-mail">Copiar e-mail</button></div>
+    <p id="copy-ok" aria-live="polite"></p>
+  </div>
+</section>
+
+<footer><div class="wrap"><span>Criado pela SEVEN AI – Funcionários Digitais para Empresas</span><span>Página de demonstração · dados ilustrativos</span></div></footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+window.VITRINE = {"services": [{"name": "Banho", "meta": "1h"}, {"name": "Banho e tosa", "meta": "1h20 a 2h"}, {"name": "Consulta veterinária", "meta": "30 min"}, {"name": "Vacina", "meta": "15 min"}, {"name": "Hotelzinho (diária)", "meta": "entrada"}], "extra": {"label": "Qual o porte do seu pet?", "options": ["P · até 10 kg", "M · 10 a 20 kg", "G · 20 a 35 kg", "GG · acima de 35 kg", "Gato"]}, "closed": [0], "slots": ["08:00", "09:00", "10:30", "11:30", "13:00", "14:00", "15:30", "16:30"], "chat": [{"f": "c", "t": "Oi! Tem horário pra banho amanhã? Ele é um shih-tzu", "h": "08:12"}, {"f": "a", "t": "Oi! 🐶 Tem sim. Shih-tzu é porte P: o banho fica R$ 55. Amanhã tenho 9h, 10h30 ou 14h. Qual prefere?", "h": "08:12"}, {"f": "c", "t": "10h30. Vocês buscam?", "h": "08:13"}, {"f": "a", "t": "Buscamos! O táxi dog passa às 10h (R$ 15 o trecho). Qual o nome dele?", "h": "08:13"}, {"f": "c", "t": "Thor", "h": "08:14"}, {"f": "a", "t": "Agendado ✅ Thor · banho · amanhã 10h30 · busca às 10h. Te aviso quando o motorista sair.", "h": "08:14"}, {"f": "s", "sys": true, "t": "Dia seguinte · 11:52"}, {"f": "a", "t": "O Thor está pronto e cheiroso! 📸 [foto do Thor]\nO táxi dog sai para entregar em 15 minutos.", "h": "11:52"}, {"f": "s", "sys": true, "t": "15 dias depois"}, {"f": "a", "t": "Oi! Já faz 15 dias do último banho do Thor 🛁 Deixo marcado quinta, 10h30, com busca às 10h?", "h": "09:00"}, {"f": "c", "t": "Pode marcar!", "h": "09:03"}]};
+
+window.buildScene = function(T, scene, camera, o){
+  camera.position.set(0, 0, 14);
+  scene.add(new T.AmbientLight(0xffffff, .55));
+  var l1 = new T.PointLight(0xff8a6d, 1.2, 40); l1.position.set(6, 6, 8); scene.add(l1);
+  var l2 = new T.PointLight(0x4fd8c6, 1.0, 40); l2.position.set(-6, -3, 8); scene.add(l2);
+  var l3 = new T.DirectionalLight(0xffffff, .55); l3.position.set(0, 8, 10); scene.add(l3);
+  // pata
+  var paw = new T.Group();
+  var mPad = new T.MeshStandardMaterial({color:0xff6a4d, roughness:.38, metalness:.05});
+  var mBean = new T.MeshStandardMaterial({color:0xff8f74, roughness:.32});
+  var pad = new T.Mesh(new T.SphereGeometry(1.25, 48, 32), mPad); pad.scale.set(1.15, .95, .55); pad.position.y = -.55; paw.add(pad);
+  [[-1.25,.85,.55],[-.45,1.55,.5],[.45,1.55,.5],[1.25,.85,.55]].forEach(function(b, i){
+    var bean = new T.Mesh(new T.SphereGeometry(.52, 36, 24), mBean); bean.scale.set(.85, 1.05, .6);
+    bean.position.set(b[0], b[1], 0); bean.rotation.z = -b[0]*.25; paw.add(bean);
+  });
+  scene.add(paw);
+  // bolhas
+  var bubbles = [], N = o.small ? 22 : 46;
+  var bg = new T.SphereGeometry(1, 28, 20);
+  var tints = [0xffffff, 0xffd6cc, 0xc8f3ec, 0xe2dbff];
+  for (var i=0; i<N; i++){
+    var mat = new T.MeshPhongMaterial({color:tints[i%4], specular:0xffffff, shininess:140, transparent:true, opacity:.42, depthWrite:false});
+    var b = new T.Mesh(bg, mat);
+    var r = .12 + Math.random()*.5; b.scale.setScalar(r);
+    b.userData = {r:r, sp:.25 + Math.random()*.6, ph:Math.random()*6.28, x0:(Math.random()-.5)*16, z:(Math.random()-.5)*6};
+    b.position.set(b.userData.x0, (Math.random()-.5)*12, b.userData.z);
+    scene.add(b); bubbles.push(b);
+  }
+  function place(w, h){
+    var wide = w > 760;
+    paw.position.set(wide ? 3.6 : 0, wide ? 0 : 2.6, 0);
+    paw.scale.setScalar(wide ? 1 : .78);
+  }
+  return {
+    resize: function(w, h){ place(w, h); },
+    update: function(t, mouse, sk){
+      paw.rotation.y = Math.sin(t*.6)*.35 + mouse.x*.5;
+      paw.rotation.x = Math.sin(t*.5)*.12 + mouse.y*.35;
+      paw.position.z = Math.sin(t*.9)*.3;
+      var squish = 1 + Math.sin(t*2.2)*.025; paw.children[0].scale.set(1.15*squish, .95/squish, .55);
+      for (var i=0; i<bubbles.length; i++){
+        var b = bubbles[i], u = b.userData;
+        b.position.y += u.sp * .016;
+        b.position.x = u.x0 + Math.sin(t*.8 + u.ph)*.5 + mouse.x*(1-u.r)*1.4;
+        if (b.position.y > 7.5) { b.position.y = -7.5; u.x0 = (Math.random()-.5)*16; }
+      }
+      camera.position.y = -sk*2.5; camera.lookAt(0, -sk*2.5, 0);
+    }
+  };
+};
+
+</script>
+<script>
+/* ===== Base comum das vitrines SEVEN AI (agendamento + WhatsApp simulado + 3D) ===== */
+(function(){
+  "use strict";
+  var CFG = window.VITRINE;
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function $(s, r){ return (r||document).querySelector(s); }
+  function el(tag, cls, txt){ var e=document.createElement(tag); if(cls) e.className=cls; if(txt!=null) e.textContent=txt; return e; }
+
+  /* ---------- Rolagem suave dos botões de chamada ---------- */
+  document.querySelectorAll("[data-goto]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var t=document.getElementById(b.getAttribute("data-goto"));
+      if(t) t.scrollIntoView({behavior: reduce?"auto":"smooth", block:"start"});
+    });
+  });
+
+  /* ---------- Agendamento ---------- */
+  var LIVE = !!(CFG.intake && CFG.intake.url && /\.github\.io$/.test(location.hostname));
+  if(LIVE){ var cw=document.getElementById("bk-consent-wrap"); if(cw) cw.hidden=false; }
+  var bk = { step:0, service:null, extra:null, date:null, time:null, name:"", phone:"" };
+  var root = $("#agenda");
+  var steps = root.querySelectorAll(".bk-step");
+  var dots = root.querySelectorAll(".bk-progress li");
+  var DAYS = ["dom","seg","ter","qua","qui","sex","sáb"];
+  var MONTHS = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
+
+  function show(i){
+    bk.step=i;
+    steps.forEach(function(s,k){ s.hidden = k!==i; });
+    dots.forEach(function(d,k){ d.classList.toggle("on", k<=i); d.setAttribute("aria-current", k===i?"step":"false"); });
+    var f = steps[i].querySelector("button, input");
+    if(f && bk.touched) f.focus({preventScroll:true});
+  }
+
+  // passo 1: serviços
+  var svcBox = $("#bk-services");
+  CFG.services.forEach(function(s){
+    var b=el("button","bk-opt"); b.type="button";
+    var t=el("span","bk-opt-t",s.name); var m=el("span","bk-opt-m",s.meta);
+    b.appendChild(t); b.appendChild(m);
+    b.addEventListener("click",function(){
+      bk.touched=true; bk.service=s;
+      svcBox.querySelectorAll(".bk-opt").forEach(function(x){x.classList.remove("sel");}); b.classList.add("sel");
+      show(CFG.extra ? 1 : 2);
+    });
+    svcBox.appendChild(b);
+  });
+
+  // passo 2 (opcional): campo do nicho (porte do pet, imóvel...)
+  if(CFG.extra){
+    $("#bk-extra-label").textContent = CFG.extra.label;
+    var exBox=$("#bk-extra");
+    CFG.extra.options.forEach(function(o){
+      var b=el("button","bk-chip",o); b.type="button";
+      b.addEventListener("click",function(){ bk.extra=o; exBox.querySelectorAll(".bk-chip").forEach(function(x){x.classList.remove("sel");}); b.classList.add("sel"); show(2); });
+      exBox.appendChild(b);
+    });
+  }
+
+  // passo 3: data
+  var dBox=$("#bk-dates"), tBox=$("#bk-times");
+  var today=new Date(); today.setHours(0,0,0,0);
+  var n=0, d=new Date(today);
+  while(n<12){
+    d.setDate(d.getDate()+1);
+    if(CFG.closed.indexOf(d.getDay())>-1) continue;
+    (function(day){
+      var b=el("button","bk-day"); b.type="button";
+      b.appendChild(el("span","bk-day-w",DAYS[day.getDay()]));
+      b.appendChild(el("span","bk-day-n",String(day.getDate())));
+      b.appendChild(el("span","bk-day-m",MONTHS[day.getMonth()]));
+      b.addEventListener("click",function(){
+        bk.date=day; dBox.querySelectorAll(".bk-day").forEach(function(x){x.classList.remove("sel");}); b.classList.add("sel");
+        renderTimes(); show(3);
+      });
+      dBox.appendChild(b);
+    })(new Date(d));
+    n++;
+  }
+  function hash(s){ var h=0; for(var i=0;i<s.length;i++){ h=(h*31+s.charCodeAt(i))|0; } return Math.abs(h); }
+  function renderTimes(){
+    tBox.innerHTML="";
+    var key=bk.date.toDateString();
+    CFG.slots.forEach(function(t,i){
+      var busy = (hash(key+t+(bk.service?bk.service.name:""))%10)<4;
+      var b=el("button","bk-time"+(busy?" busy":""),t); b.type="button";
+      if(busy){ b.disabled=true; b.setAttribute("aria-label",t+" ocupado"); b.title="Ocupado"; }
+      b.addEventListener("click",function(){ bk.time=t; tBox.querySelectorAll(".bk-time").forEach(function(x){x.classList.remove("sel");}); b.classList.add("sel"); show(4); });
+      tBox.appendChild(b);
+    });
+    $("#bk-date-label").textContent = DAYS[bk.date.getDay()]+", "+bk.date.getDate()+" de "+MONTHS[bk.date.getMonth()];
+  }
+
+  // passo 5: dados
+  $("#bk-form").addEventListener("submit",function(e){
+    e.preventDefault();
+    var nm=$("#bk-name").value.trim(), ph=$("#bk-phone").value.replace(/\D/g,"");
+    var err=$("#bk-err");
+    if(nm.length<2){ err.textContent="Escreva seu nome para a gente saber como te chamar."; $("#bk-name").focus(); return; }
+    if(ph.length<10){ err.textContent="O telefone precisa ter DDD e número, por exemplo 12 99999-0000."; $("#bk-phone").focus(); return; }
+    err.textContent=""; bk.name=nm.split(" ")[0];
+    var resumo = bk.service.name + (bk.extra? " · "+bk.extra : "") + " — " + DAYS[bk.date.getDay()]+", "+bk.date.getDate()+" de "+MONTHS[bk.date.getMonth()]+" às "+bk.time;
+    function done(note){
+      $("#bk-sum-name").textContent=bk.name; $("#bk-sum").textContent=resumo;
+      if(note) $("#bk-done-note").textContent=note;
+      show(5); var ck=$("#bk-check"); ck.classList.remove("draw"); void ck.getBoundingClientRect(); ck.classList.add("draw");
+    }
+    if(!LIVE){ done(); return; }
+    var btn=e.submitter||$("#bk-form button[type=submit]"); btn.disabled=true; btn.textContent="Enviando…";
+    fetch(CFG.intake.url,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({
+      tenant:CFG.intake.tenant, nome:nm, telefone:ph, servico:bk.service.name, detalhe:bk.extra||"",
+      data:bk.date.toISOString().slice(0,10), horario:bk.time, pagina:location.pathname,
+      consentimento:$("#bk-consent").checked, website:$("#bk-website").value })})
+    .then(function(r){ return r.json().catch(function(){return {};}).then(function(j){ return {status:r.status, j:j}; }); })
+    .then(function(x){
+      btn.disabled=false; btn.textContent="Confirmar horário";
+      if(x.j && x.j.ok){ done("Pedido recebido. Ele já está no CRM da demonstração" + (x.j.followup_scheduled? " e o retorno pelo WhatsApp ficou agendado para amanhã às 10h." : ".")); }
+      else if(x.status===429){ err.textContent="Muitos pedidos seguidos. Espere alguns minutos e tente de novo."; }
+      else { err.textContent="Não conseguimos registrar agora. Confira nome e telefone e tente de novo."; }
+    })
+    .catch(function(){ btn.disabled=false; btn.textContent="Confirmar horário"; err.textContent="Sem conexão com o servidor. Tente de novo em instantes."; });
+  });
+  $("#bk-phone").addEventListener("input",function(e){
+    var v=e.target.value.replace(/\D/g,"").slice(0,11);
+    if(v.length>6) v="("+v.slice(0,2)+") "+v.slice(2,v.length-4)+"-"+v.slice(-4);
+    else if(v.length>2) v="("+v.slice(0,2)+") "+v.slice(2);
+    e.target.value=v;
+  });
+  root.querySelectorAll("[data-back]").forEach(function(b){
+    b.addEventListener("click",function(){
+      var to=bk.step-1; if(to===1 && !CFG.extra) to=0; show(Math.max(0,to));
+    });
+  });
+  $("#bk-restart").addEventListener("click",function(){
+    bk={step:0,touched:true}; root.querySelectorAll(".sel").forEach(function(x){x.classList.remove("sel");});
+    $("#bk-form").reset(); show(0);
+  });
+  show(0);
+
+  /* ---------- WhatsApp simulado ---------- */
+  var chat=$("#chat-body"), playing=false, played=false;
+  function bubble(m){
+    var b=el("div","msg "+(m.f==="c"?"in":"out"));
+    if(m.sys){ b=el("div","msg sys"); }
+    var p=el("p",null,m.t); b.appendChild(p);
+    if(!m.sys){ var tm=el("span","msg-time",m.h||""); if(m.f!=="c") tm.textContent=(m.h||"")+" ✓✓"; b.appendChild(tm); }
+    return b;
+  }
+  function renderAll(){ chat.innerHTML=""; CFG.chat.forEach(function(m){ chat.appendChild(bubble(m)); }); }
+  function play(){
+    if(playing) return; playing=true; played=true;
+    chat.innerHTML=""; var i=0;
+    function next(){
+      if(i>=CFG.chat.length){ playing=false; return; }
+      var m=CFG.chat[i++];
+      if(m.f!=="c" && !m.sys){
+        var ty=el("div","msg out typing"); ty.innerHTML="<i></i><i></i><i></i>"; chat.appendChild(ty); chat.scrollTop=chat.scrollHeight;
+        setTimeout(function(){ ty.remove(); chat.appendChild(bubble(m)); chat.scrollTop=chat.scrollHeight; setTimeout(next,700); }, Math.min(1600, 500+m.t.length*12));
+      } else { chat.appendChild(bubble(m)); chat.scrollTop=chat.scrollHeight; setTimeout(next, m.sys?900:1100); }
+    }
+    next();
+  }
+  renderAll();
+  $("#chat-play").addEventListener("click",function(){ playing=false; play(); });
+  if(!reduce && "IntersectionObserver" in window){
+    var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting && !played){ play(); } }); },{threshold:.45});
+    io.observe($("#whats"));
+  }
+
+  /* ---------- Copiar contato ---------- */
+  var cp=$("#copy-mail");
+  if(cp) cp.addEventListener("click",function(){
+    var t=$("#mail-text").textContent, msg=$("#copy-ok");
+    function sel(){ var r=document.createRange(); r.selectNodeContents($("#mail-text")); var s=getSelection(); s.removeAllRanges(); s.addRange(r); msg.textContent="Endereço selecionado. Use Ctrl+C para copiar."; }
+    try{ navigator.clipboard.writeText(t).then(function(){ msg.textContent="E-mail copiado."; }, sel); }catch(e){ sel(); }
+  });
+
+  /* ---------- Pequenas interações por nicho ---------- */
+  document.querySelectorAll(".seg").forEach(function(g){
+    g.querySelectorAll("button").forEach(function(b){
+      b.addEventListener("click",function(){ g.querySelectorAll("button").forEach(function(x){ x.setAttribute("aria-pressed", x===b?"true":"false"); }); });
+    });
+  });
+  var sw=$("#swap");
+  if(sw){
+    if(reduce || !("IntersectionObserver" in window)) sw.classList.add("done");
+    else new IntersectionObserver(function(es,ob){ if(es[0].isIntersecting){ setTimeout(function(){ sw.classList.add("done"); },1400); ob.disconnect(); } },{threshold:.6}).observe(sw);
+  }
+
+  /* ---------- Cena 3D ---------- */
+  var hero=$(".hero"), canvas=$("#scene");
+  function fallback(){ hero.classList.add("no3d"); if(canvas) canvas.remove(); }
+  function webgl(){ try{ var c=document.createElement("canvas"); return !!(window.WebGLRenderingContext && (c.getContext("webgl")||c.getContext("experimental-webgl"))); }catch(e){ return false; } }
+  if(!window.THREE || !canvas || !webgl() || typeof window.buildScene!=="function"){ fallback(); return; }
+  try{
+    var T=window.THREE, small=window.innerWidth<700;
+    var renderer=new T.WebGLRenderer({canvas:canvas, antialias:!small, alpha:true});
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio||1, 2));
+    var scene=new T.Scene();
+    var camera=new T.PerspectiveCamera(40,1,0.1,200);
+    var api=window.buildScene(T, scene, camera, {small:small});
+    var mouse={x:0,y:0,tx:0,ty:0}, scrollK=0, visible=true, running=true, t0=performance.now();
+    function size(){ var w=hero.clientWidth, h=hero.clientHeight; renderer.setSize(w,h,false); camera.aspect=w/h; camera.updateProjectionMatrix(); if(api.resize) api.resize(w,h); }
+    window.addEventListener("resize",size); size();
+    function mv(x,y){ var r=hero.getBoundingClientRect(); mouse.tx=((x-r.left)/r.width)*2-1; mouse.ty=((y-r.top)/r.height)*2-1; }
+    hero.addEventListener("pointermove",function(e){ mv(e.clientX,e.clientY); });
+    hero.addEventListener("touchmove",function(e){ if(e.touches[0]) mv(e.touches[0].clientX,e.touches[0].clientY); },{passive:true});
+    window.addEventListener("scroll",function(){ scrollK=Math.min(1, window.scrollY/Math.max(1,hero.clientHeight)); },{passive:true});
+    document.addEventListener("visibilitychange",function(){ running=!document.hidden; if(running) loop(); });
+    if("IntersectionObserver" in window){ new IntersectionObserver(function(es){ visible=es[0].isIntersecting; if(visible) loop(); }).observe(hero); }
+    var raf=0;
+    function frame(now){
+      raf=0;
+      mouse.x+=(mouse.tx-mouse.x)*0.05; mouse.y+=(mouse.ty-mouse.y)*0.05;
+      api.update((now-t0)/1000, mouse, scrollK);
+      renderer.render(scene,camera);
+      if(!reduce && running && visible) raf=requestAnimationFrame(frame);
+    }
+    function loop(){ if(!raf) raf=requestAnimationFrame(frame); }
+    hero.classList.add("has3d");
+    loop();
+  }catch(e){ fallback(); }
+})();
+
+</script>
+
+</body>
+</html>

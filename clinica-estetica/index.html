@@ -1,0 +1,647 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Sua Clínica Estética</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Demonstração SEVEN AI: site de clínica de estética com agendamento, confirmação na véspera e encaixe pela lista de espera.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Italiana&family=Manrope:wght@400;500;600;700;800&display=swap">
+<style>
+
+/* Layout: escultura líquida perolada no centro do hero, título fino sobreposto; agenda do dia mostrando o horário vago sendo reocupado */
+:root{
+  --bg:#f5f1f4; --surface:#ffffff; --fg:#2c2231; --muted:#716576; --line:#e7dee6;
+  --accent:#8e4870; --accent-ink:#ffffff; --accent2:#7fa596; --danger:#b3261e;
+  --band-bg:#2c2231; --band-fg:#f5f1f4;
+  --display:"Italiana", "Didot", "Bodoni MT", Georgia, serif; --display-w:400;
+  --body:"Manrope", "Segoe UI", system-ui, sans-serif;
+  --card-r:18px; --btn-r:14px; --card-shadow:0 1px 2px rgba(44,34,49,.06), 0 24px 48px -32px rgba(44,34,49,.4);
+  --fallback:radial-gradient(60% 60% at 50% 45%, #f3d9e6, transparent 70%), linear-gradient(135deg,#f5f1f4,#e9e0f0 50%,#dfece6);
+  color-scheme:light;
+}
+/* ===== Base comum — cada vitrine define os tokens no :root ===== */
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} *{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important} }
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+h1,h2,h3{font-family:var(--display);line-height:1.08;text-wrap:balance;margin:0;font-weight:var(--display-w,600)}
+p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:6px}
+.wrap{max-width:1160px;margin:0 auto;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+section{padding-block:clamp(64px,9vw,112px)}
+.sec-head{display:grid;gap:12px;max-width:640px;margin-bottom:clamp(28px,4vw,44px)}
+.sec-head h2{font-size:clamp(30px,4.4vw,48px)}
+.sec-head p{color:var(--muted);font-size:17px}
+
+/* faixa de demonstração */
+.demo-band{background:var(--band-bg);color:var(--band-fg);font-size:13px;line-height:1.4;position:relative;z-index:3}
+.demo-band .wrap{padding-block:9px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.demo-band b{font-weight:700}
+
+/* hero */
+.hero{position:relative;overflow:hidden;isolation:isolate}
+#scene{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:-1}
+.hero.no3d{background:var(--fallback);background-size:300% 300%;animation:fb 16s ease-in-out infinite alternate}
+@keyframes fb{from{background-position:0% 30%}to{background-position:100% 70%}}
+
+/* botões */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;border:0;border-radius:var(--btn-r,999px);padding:15px 26px;font-weight:700;font-size:16px;text-decoration:none;transition:transform .18s ease, box-shadow .18s ease, background .18s ease}
+.btn:active{transform:translateY(1px) scale(.98)}
+.btn-main{background:var(--accent);color:var(--accent-ink);box-shadow:0 10px 30px -10px var(--accent)}
+.btn-main:hover{transform:translateY(-2px);box-shadow:0 16px 36px -12px var(--accent)}
+.btn-ghost{background:transparent;color:inherit;box-shadow:inset 0 0 0 1.5px currentColor}
+.btn-ghost:hover{background:color-mix(in srgb, currentColor 8%, transparent)}
+
+/* ===== Agendamento ===== */
+.bk{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:clamp(24px,4vw,56px);align-items:start}
+@media (max-width:860px){ .bk{grid-template-columns:1fr} }
+.bk-card{background:var(--surface);border-radius:var(--card-r,22px);padding:clamp(20px,3vw,32px);box-shadow:var(--card-shadow);min-width:0}
+.bk-progress{list-style:none;display:flex;gap:6px;padding:0;margin:0 0 22px}
+.bk-progress li{flex:1;height:5px;border-radius:9px;background:var(--line);transition:background .3s}
+.bk-progress li.on{background:var(--accent)}
+.bk-step h3{font-size:22px;margin-bottom:6px}
+.bk-step .hint{color:var(--muted);font-size:14px;margin-bottom:18px}
+.bk-opts{display:grid;gap:10px}
+.bk-opt{display:flex;justify-content:space-between;align-items:center;gap:14px;text-align:left;background:var(--bg);border:1.5px solid var(--line);border-radius:14px;padding:14px 16px;transition:border-color .15s, transform .15s, background .15s}
+.bk-opt:hover{border-color:var(--accent);transform:translateX(3px)}
+.bk-opt.sel{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%, var(--bg))}
+.bk-opt-t{font-weight:700}
+.bk-opt-m{color:var(--muted);font-size:13px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.bk-chips{display:flex;flex-wrap:wrap;gap:10px}
+.bk-chip{border:1.5px solid var(--line);background:var(--bg);border-radius:999px;padding:10px 18px;font-weight:600;transition:border-color .15s, background .15s}
+.bk-chip:hover,.bk-chip.sel{border-color:var(--accent)}
+.bk-chip.sel{background:var(--accent);color:var(--accent-ink)}
+.bk-days{display:grid;grid-template-columns:repeat(auto-fill,minmax(68px,1fr));gap:8px}
+.bk-day{display:grid;justify-items:center;gap:0;border:1.5px solid var(--line);background:var(--bg);border-radius:14px;padding:10px 4px;transition:border-color .15s, transform .15s}
+.bk-day:hover{border-color:var(--accent);transform:translateY(-2px)}
+.bk-day.sel{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.bk-day-w,.bk-day-m{font-size:12px;opacity:.75}
+.bk-day-n{font-size:22px;font-weight:800;font-family:var(--display);font-variant-numeric:tabular-nums}
+.bk-times{display:grid;grid-template-columns:repeat(auto-fill,minmax(82px,1fr));gap:8px}
+.bk-time{border:1.5px solid var(--line);background:var(--bg);border-radius:12px;padding:11px 6px;font-weight:700;font-variant-numeric:tabular-nums;transition:border-color .15s}
+.bk-time:hover:not(:disabled){border-color:var(--accent)}
+.bk-time.sel{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.bk-time.busy{opacity:.38;text-decoration:line-through;cursor:not-allowed}
+.bk-form{display:grid;gap:14px}
+.bk-form label{display:grid;gap:6px;font-weight:600;font-size:14px}
+.bk-form input{font:inherit;color:var(--fg);background:var(--bg);border:1.5px solid var(--line);border-radius:12px;padding:13px 14px;width:100%}
+.bk-form input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 22%, transparent)}
+.bk-err{color:var(--danger);font-size:14px;min-height:1.2em}
+.bk-nav{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:18px;flex-wrap:wrap}
+.bk-back{background:none;border:0;color:var(--muted);font-weight:600;padding:8px 0}
+.bk-back:hover{color:var(--fg)}
+.bk-done{display:grid;justify-items:center;text-align:center;gap:12px;padding-block:10px}
+.bk-done svg{width:84px;height:84px}
+.bk-done circle{fill:color-mix(in srgb,var(--accent) 14%, transparent)}
+.bk-done path{fill:none;stroke:var(--accent);stroke-width:6;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:60;stroke-dashoffset:0}
+.bk-done svg.draw path{animation:draw .7s .1s ease-out both}
+@keyframes draw{from{stroke-dashoffset:60}to{stroke-dashoffset:0}}
+.bk-done .sum{font-weight:700;font-size:18px}
+.bk-done .note{color:var(--muted);font-size:14px;max-width:38ch}
+.bk-side{display:grid;gap:18px;min-width:0}
+.bk-side ul{list-style:none;padding:0;margin:0;display:grid;gap:14px}
+.bk-side li{display:grid;grid-template-columns:28px minmax(0,1fr);gap:12px;align-items:start}
+.bk-side li svg{width:26px;height:26px;color:var(--accent)}
+.bk-side li b{display:block}
+.bk-side li span{color:var(--muted);font-size:15px}
+
+/* ===== WhatsApp simulado ===== */
+.wa{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:clamp(28px,5vw,72px);align-items:center}
+@media (max-width:860px){ .wa{grid-template-columns:1fr} .phone{justify-self:center} }
+.wa-copy{display:grid;gap:18px;min-width:0}
+.wa-copy ul{margin:0;padding-left:20px;display:grid;gap:8px;color:var(--muted)}
+.phone{width:min(360px,100%);background:#0f1a17;border-radius:42px;padding:12px;box-shadow:0 40px 80px -30px rgba(0,0,0,.45), inset 0 0 0 2px rgba(255,255,255,.08)}
+.phone-top{display:flex;align-items:center;gap:10px;background:#1f2c27;color:#e9edef;border-radius:30px 30px 0 0;padding:16px 16px 12px}
+.phone-top .av{width:36px;height:36px;border-radius:50%;background:var(--accent);display:grid;place-items:center;color:var(--accent-ink);font-weight:800;font-size:14px}
+.phone-top b{display:block;font-size:15px;line-height:1.2}
+.phone-top small{font-size:12px;color:#8fd3a8}
+#chat-body{height:430px;overflow-y:auto;background:#e8e2d9;background-image:radial-gradient(rgba(0,0,0,.035) 1px, transparent 1px);background-size:14px 14px;padding:14px 10px;display:flex;flex-direction:column;gap:6px;border-radius:0 0 30px 30px;scroll-behavior:smooth}
+.msg{max-width:84%;padding:7px 10px 5px;border-radius:10px;font-size:14px;line-height:1.4;color:#111b21;box-shadow:0 1px .5px rgba(0,0,0,.13);animation:pop .25s ease-out}
+.msg p{white-space:pre-line}
+.msg.in{align-self:flex-start;background:#fff;border-top-left-radius:2px}
+.msg.out{align-self:flex-end;background:#d9fdd3;border-top-right-radius:2px}
+.msg.sys{align-self:center;background:#fff6c5;color:#54470e;font-size:12px;text-align:center;max-width:92%;box-shadow:none}
+.msg-time{display:block;text-align:right;font-size:10.5px;color:#667781;margin-top:2px}
+.typing{display:flex;gap:4px;padding:12px 14px}
+.typing i{width:7px;height:7px;border-radius:50%;background:#8696a0;animation:blink 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes blink{0%,100%{opacity:.3;transform:translateY(0)}50%{opacity:1;transform:translateY(-3px)}}
+@keyframes pop{from{opacity:0;transform:translateY(6px) scale(.97)}to{opacity:1;transform:none}}
+
+/* ===== Como funciona ===== */
+.how{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(16px,3vw,32px);counter-reset:how}
+@media (max-width:760px){ .how{grid-template-columns:1fr} }
+.how li{list-style:none;display:grid;gap:10px;counter-increment:how;min-width:0}
+.how li::before{content:counter(how);font-family:var(--display);font-size:44px;line-height:1;color:var(--accent);font-weight:700}
+.how h3{font-size:21px}
+.how p{color:var(--muted)}
+ol.how{padding:0;margin:0}
+
+/* ===== Contato / rodapé ===== */
+.final{display:grid;gap:22px;justify-items:start;max-width:720px}
+.final h2{font-size:clamp(32px,5vw,56px)}
+.final p{color:var(--muted);font-size:17px}
+.contact{display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:var(--surface);border-radius:16px;padding:14px 16px;box-shadow:var(--card-shadow);max-width:100%}
+.contact code{font-family:var(--body);font-weight:700;font-size:16px;user-select:all;overflow-wrap:anywhere}
+.contact button{border:0;background:var(--accent);color:var(--accent-ink);font-weight:700;border-radius:10px;padding:8px 14px}
+#copy-ok{font-size:13px;color:var(--muted);min-height:1em}
+footer{border-top:1px solid var(--line);font-size:14px;color:var(--muted)}
+footer .wrap{padding-block:26px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+.bk-hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.bk-consent{display:flex!important;grid-template-columns:none;gap:10px;align-items:flex-start;font-weight:500!important;color:var(--muted);font-size:13px!important}
+.bk-consent input{width:auto!important;margin-top:3px}
+
+
+.hero{min-height:clamp(600px,86vh,800px);display:flex;align-items:flex-end;justify-content:center;text-align:center}
+.hero > .wrap{width:100%;padding-block:0 clamp(40px,6vw,72px);display:grid;justify-items:center;gap:20px}
+.brand{position:absolute;top:22px;left:0;right:0;z-index:2}
+.brand .wrap{display:flex;justify-content:space-between;align-items:center;padding-block:0;text-align:left}
+.logo{font-family:var(--display);font-size:26px;letter-spacing:.04em}
+.hero h1{font-size:clamp(46px,8.5vw,112px);letter-spacing:.01em;line-height:.95;max-width:12ch}
+.hero .lead{font-size:clamp(16px,1.5vw,19px);color:var(--muted);max-width:48ch}
+.hero-cta{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.sec-head h2,.final h2{font-weight:400}
+.how h3{font-family:var(--body);font-weight:800;font-size:19px}
+.how li::before{font-weight:400}
+.procs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--card-r);overflow:hidden}
+@media (max-width:900px){ .procs{grid-template-columns:repeat(2,minmax(0,1fr))} }
+@media (max-width:520px){ .procs{grid-template-columns:1fr} }
+.proc{background:var(--surface);padding:24px;display:grid;gap:10px;align-content:start;min-width:0}
+.proc h3{font-family:var(--body);font-weight:800;font-size:18px}
+.proc p{color:var(--muted);font-size:15px}
+.proc dl{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:6px 0 0;font-size:14px;font-variant-numeric:tabular-nums}
+.proc dt{color:var(--muted)}
+.proc dd{margin:0;font-weight:700}
+.dia{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:clamp(24px,4vw,56px);align-items:center}
+@media (max-width:860px){ .dia{grid-template-columns:1fr} }
+.dia-copy{display:grid;gap:16px;min-width:0}
+.dia-copy ul{margin:0;padding:0;list-style:none;display:grid;gap:14px}
+.dia-copy li{display:grid;gap:2px}
+.dia-copy li b{font-size:17px}
+.dia-copy li span{color:var(--muted)}
+.agenda-dia{background:var(--surface);border-radius:var(--card-r);box-shadow:var(--card-shadow);padding:clamp(16px,2.5vw,26px);display:grid;gap:8px;min-width:0}
+.agenda-dia header{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:6px;flex-wrap:wrap}
+.agenda-dia header b{font-family:var(--display);font-size:28px;font-weight:400}
+.agenda-dia header span{color:var(--muted);font-size:14px}
+.slot{display:grid;grid-template-columns:54px minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px;border-radius:12px;background:var(--bg);font-size:15px}
+.slot time{font-weight:800;font-variant-numeric:tabular-nums}
+.slot .who{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.slot .who small{display:block;color:var(--muted);font-size:12.5px}
+.chip{font-size:12px;font-weight:800;padding:4px 10px;border-radius:999px;white-space:nowrap}
+.ok{background:#e2f0ea;color:#2f6b55}
+.wait{background:#f6ead8;color:#8a5a12}
+.free{background:#f8e1e1;color:#9b2c2c}
+.fill{background:#ecdff0;color:var(--accent)}
+.slot.swap{position:relative;overflow:hidden}
+.slot.swap .a,.slot.swap .b{grid-column:2 / 4;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;transition:opacity .5s ease, transform .5s ease}
+.slot.swap .b{position:absolute;left:78px;right:12px;opacity:0;transform:translateY(12px)}
+.slot.swap.done .a{opacity:0;transform:translateY(-12px)}
+.slot.swap.done .b{opacity:1;transform:none}
+.slot.swap.done{background:#f3eaf6}
+.whats{background:#efe7ee}
+
+</style>
+</head>
+<body>
+
+<div class="demo-band"><div class="wrap"><b>Demonstração SEVEN AI</b> <span>Modelo de site para clínica de estética. Procedimentos, valores, profissionais e pacientes são ilustrativos.</span></div></div>
+
+
+<header class="hero">
+  <canvas id="scene" aria-hidden="true"></canvas>
+  <div class="brand"><div class="wrap"><span class="logo">Sua Clínica</span><button class="btn btn-ghost" type="button" data-goto="agenda" style="padding:10px 18px">Agendar avaliação</button></div></div>
+  <div class="wrap">
+    <h1>Cuidar de você leva só um minuto para marcar.</h1>
+    <p class="lead">Avaliação, limpeza de pele, peeling, drenagem e laser. Agende pelo site ou pelo WhatsApp e receba a confirmação na véspera.</p>
+    <div class="hero-cta"><button class="btn btn-main" type="button" data-goto="agenda">Agendar avaliação</button><button class="btn btn-ghost" type="button" data-goto="procedimentos">Ver procedimentos</button></div>
+  </div>
+</header>
+
+
+
+<section id="procedimentos">
+  <div class="wrap">
+    <div class="sec-head"><h2>Procedimentos</h2><p>Duração, número de sessões e intervalo entre elas. É com esses dados que o Funcionário Digital monta a agenda e lembra o retorno. Valores de exemplo.</p></div>
+    <div class="procs">
+      <article class="proc"><h3>Limpeza de pele profunda</h3><p>Extração, esfoliação e máscara calmante.</p><dl><dt>Duração</dt><dd>60 min</dd><dt>Frequência</dt><dd>1 vez por mês</dd><dt>Valor</dt><dd>R$ 180</dd></dl></article>
+      <article class="proc"><h3>Peeling químico</h3><p>Renovação da pele para manchas e textura.</p><dl><dt>Duração</dt><dd>40 min</dd><dt>Sessões</dt><dd>4, a cada 15 dias</dd><dt>Valor</dt><dd>R$ 220 por sessão</dd></dl></article>
+      <article class="proc"><h3>Drenagem linfática</h3><p>Pós-operatório, gestantes e retenção.</p><dl><dt>Duração</dt><dd>50 min</dd><dt>Pacote</dt><dd>10 sessões</dd><dt>Valor</dt><dd>R$ 1.200 o pacote</dd></dl></article>
+      <article class="proc"><h3>Depilação a laser</h3><p>Diodo, com avaliação do fototipo.</p><dl><dt>Duração</dt><dd>20 a 60 min</dd><dt>Sessões</dt><dd>8 a 10, a cada 30–45 dias</dd><dt>Valor</dt><dd>sob avaliação</dd></dl></article>
+      <article class="proc"><h3>Toxina botulínica</h3><p>Aplicada por médica responsável.</p><dl><dt>Duração</dt><dd>30 min</dd><dt>Retorno</dt><dd>15 dias depois</dd><dt>Valor</dt><dd>sob avaliação</dd></dl></article>
+      <article class="proc"><h3>Avaliação</h3><p>Conversa, análise da pele e plano de tratamento.</p><dl><dt>Duração</dt><dd>30 min</dd><dt>Para quem</dt><dd>primeira visita</dd><dt>Valor</dt><dd>sem custo</dd></dl></article>
+    </div>
+  </div>
+</section>
+
+
+<section id="agenda">
+  <div class="wrap">
+    <div class="sec-head"><h2>Agende sua avaliação</h2><p>Escolha o procedimento, conte se é sua primeira vez e pegue um horário livre.</p></div>
+    <div class="bk">
+      <div class="bk-side">
+        <ul><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><div><b>Confirmação na véspera</b><span>Um dia antes, a paciente responde 1 para confirmar ou 2 para remarcar. Ninguém da recepção precisa ligar.</span></div></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><div><b>Horário vago vira encaixe</b><span>Se alguém desmarca, quem está na lista de espera é avisada na hora e pode ficar com o horário.</span></div></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><div><b>Retorno sem esquecer</b><span>Peeling, toxina e laser têm intervalo certo. O retorno já fica sugerido no fim do atendimento.</span></div></li></ul>
+      </div>
+      <div class="bk-card" aria-live="polite">
+        <ol class="bk-progress" aria-label="Etapas do agendamento"><li></li><li></li><li></li><li></li><li></li><li></li></ol>
+        <div class="bk-step">
+          <h3>Qual procedimento?</h3>
+          <p class="hint">Valores e durações de exemplo.</p>
+          <div class="bk-opts" id="bk-services"></div>
+        </div>
+        
+      <div class="bk-step" hidden>
+        <h3 id="bk-extra-label"></h3>
+        <p class="hint">Isso muda a duração e o preço.</p>
+        <div class="bk-chips" id="bk-extra"></div>
+        <div class="bk-nav"><button class="bk-back" type="button" data-back>Voltar</button></div>
+      </div>
+        <div class="bk-step" hidden>
+          <h3>Qual dia fica melhor?</h3>
+          <p class="hint">Mostramos só os dias com atendimento.</p>
+          <div class="bk-days" id="bk-dates"></div>
+          <div class="bk-nav"><button class="bk-back" type="button" data-back>Voltar</button></div>
+        </div>
+        <div class="bk-step" hidden>
+          <h3>Horários livres</h3>
+          <p class="hint" id="bk-date-label"></p>
+          <div class="bk-times" id="bk-times"></div>
+          <div class="bk-nav"><button class="bk-back" type="button" data-back>Voltar</button></div>
+        </div>
+        <div class="bk-step" hidden>
+          <h3>Para quem é o horário?</h3>
+          <p class="hint">Usamos o telefone só para confirmar e lembrar você.</p>
+          <form class="bk-form" id="bk-form" novalidate>
+            <label for="bk-name">Seu nome<input id="bk-name" name="nome" autocomplete="name" placeholder="Ex.: Mariana Souza"></label>
+            <label for="bk-phone">WhatsApp<input id="bk-phone" name="tel" inputmode="tel" autocomplete="tel" placeholder="(12) 99999-0000"></label>
+            <label class="bk-hp" aria-hidden="true">Site<input id="bk-website" name="website" tabindex="-1" autocomplete="off"></label>
+            <label class="bk-consent" id="bk-consent-wrap" hidden><input type="checkbox" id="bk-consent"> Aceito receber a confirmação e um retorno pelo WhatsApp. Esta página é uma demonstração da SEVEN AI; seus dados vão para o CRM de demonstração da SEVEN AI e não são compartilhados.</label>
+            <p class="bk-err" id="bk-err" role="alert"></p>
+            <div class="bk-nav"><button class="bk-back" type="button" data-back>Voltar</button><button class="btn btn-main" type="submit">Confirmar horário</button></div>
+          </form>
+        </div>
+        <div class="bk-step" hidden>
+          <div class="bk-done">
+            <svg id="bk-check" viewBox="0 0 84 84" aria-hidden="true"><circle cx="42" cy="42" r="40"/><path d="M26 43l11 11 21-23"/></svg>
+            <h3>Pronto, <span id="bk-sum-name"></span>!</h3>
+            <p class="sum" id="bk-sum"></p>
+            <p class="note" id="bk-done-note">Na véspera você recebe a confirmação pelo WhatsApp. Se precisar remarcar, é só responder. Esta é uma demonstração: nada foi enviado e os dados somem ao recarregar a página.</p>
+            <button class="btn btn-ghost" type="button" id="bk-restart">Fazer outro agendamento</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="whats" class="whats">
+  <div class="wrap wa">
+    <div class="wa-copy">
+      <h2 style="font-size:clamp(30px,4.4vw,48px)">Remarca, encaixa e lembra sem a recepção parar</h2>
+      <p style="color:var(--muted);font-size:17px">O horário que fica vazio é dinheiro que não volta. O Funcionário Digital confirma na véspera, remarca quem não pode e oferece o horário livre para quem está esperando.</p>
+      <ul><li>Confirma todas as consultas do dia seguinte</li><li>Remarca na própria conversa, com horários livres de verdade</li><li>Avisa a lista de espera assim que um horário abre</li><li>Não dá orientação médica: dúvida clínica vai para a profissional</li></ul>
+      <div><button class="btn btn-ghost" type="button" id="chat-play">Ver a conversa acontecendo</button></div>
+    </div>
+    <div class="phone" role="img" aria-label="Simulação de conversa no WhatsApp com o Funcionário Digital">
+      <div class="phone-top"><span class="av">SC</span><div><b>Sua Clínica</b><small>Funcionário Digital · online 24h</small></div></div>
+      <div id="chat-body"></div>
+    </div>
+  </div>
+</section>
+
+
+<section id="dia">
+  <div class="wrap dia">
+    <div class="dia-copy">
+      <h2 style="font-size:clamp(30px,4.4vw,48px);font-weight:400">Agenda que não fica vazia</h2>
+      <p style="color:var(--muted);font-size:17px">Exemplo de uma quinta-feira. Às 7h40 a paciente das 15h desmarcou. Antes das 8h o horário já estava com outra pessoa.</p>
+      <ul>
+        <li><b>Véspera, 18h</b><span>Mensagem de confirmação para todas as pacientes do dia seguinte.</span></li>
+        <li><b>Desmarcou</b><span>O horário é liberado e a lista de espera é avisada por ordem de chegada.</span></li>
+        <li><b>Não respondeu</b><span>Segundo lembrete às 8h e alerta para a recepção, sem cancelar sozinho.</span></li>
+      </ul>
+    </div>
+    <div class="agenda-dia" aria-label="Agenda de exemplo de uma quinta-feira">
+      <header><b>Quinta-feira</b><span>Dra. Paula · sala 2</span></header>
+      <div class="slot"><time>09:00</time><span class="who">Renata M.<small>Limpeza de pele</small></span><span class="chip ok">Confirmada</span></div>
+      <div class="slot"><time>10:00</time><span class="who">Aline S.<small>Peeling · sessão 2 de 4</small></span><span class="chip ok">Confirmada</span></div>
+      <div class="slot"><time>11:00</time><span class="who">Bruna T.<small>Avaliação</small></span><span class="chip wait">Aguardando</span></div>
+      <div class="slot"><time>14:00</time><span class="who">Camila R.<small>Drenagem · 4 de 10</small></span><span class="chip ok">Confirmada</span></div>
+      <div class="slot swap" id="swap"><time>15:00</time>
+        <span class="a"><span class="who">Juliana P.<small>Limpeza de pele · desmarcou 7h40</small></span><span class="chip free">Horário livre</span></span>
+        <span class="b"><span class="who">Patrícia L.<small>Encaixe da lista de espera · 7h52</small></span><span class="chip fill">Encaixada</span></span>
+      </div>
+      <div class="slot"><time>16:00</time><span class="who">Fernanda C.<small>Laser · sessão 5</small></span><span class="chip ok">Confirmada</span></div>
+    </div>
+  </div>
+</section>
+
+
+<section id="como">
+  <div class="wrap">
+    <div class="sec-head"><h2>Como funciona na sua empresa</h2><p>Do primeiro contato até a operação rodando sozinha.</p></div>
+    <ol class="how"><li><h3>Sua agenda e seus procedimentos</h3><p>Profissionais, salas, duração e intervalos de retorno entram no sistema.</p></li><li><h3>Seu WhatsApp atendendo</h3><p>Ligamos o Funcionário Digital no número da clínica e testamos com você antes de atender pacientes.</p></li><li><h3>Confirmação e encaixe todo dia</h3><p>A véspera, a lista de espera e os retornos rodam sozinhos. A recepção cuida de quem está na clínica.</p></li></ol>
+  </div>
+</section>
+
+<section id="contato" class="contato">
+  <div class="wrap final">
+    <h2>Quer isso na sua clínica?</h2>
+    <p>Serve para estética, odontologia, consultório médico e clínica de exames. A SEVEN AI monta o Funcionário Digital com a sua agenda e as suas regras. Esta página é um modelo; a sua fica com a sua marca.</p>
+    <div class="contact"><code id="mail-text">dosoloaosonho@gmail.com</code><button type="button" id="copy-mail">Copiar e-mail</button></div>
+    <p id="copy-ok" aria-live="polite"></p>
+  </div>
+</section>
+
+<footer><div class="wrap"><span>Criado pela SEVEN AI – Funcionários Digitais para Empresas</span><span>Página de demonstração · dados ilustrativos</span></div></footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+window.VITRINE = {"services": [{"name": "Avaliação", "meta": "30 min"}, {"name": "Limpeza de pele profunda", "meta": "60 min"}, {"name": "Peeling químico", "meta": "40 min"}, {"name": "Drenagem linfática", "meta": "50 min"}, {"name": "Depilação a laser", "meta": "20–60 min"}], "extra": {"label": "É sua primeira vez aqui?", "options": ["Primeira vez", "Já sou paciente", "Retorno de procedimento"]}, "closed": [0], "slots": ["08:00", "09:00", "10:00", "11:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00"], "chat": [{"f": "s", "sys": true, "t": "Quarta · 18:00"}, {"f": "a", "t": "Oi, Juliana! Lembrando da sua limpeza de pele amanhã, quinta, às 15h com a Dra. Paula 💜\nResponda 1 para confirmar ou 2 para remarcar.", "h": "18:00"}, {"f": "s", "sys": true, "t": "Quinta · 07:40"}, {"f": "c", "t": "2, surgiu um compromisso 😕", "h": "07:40"}, {"f": "a", "t": "Sem problema! Tenho sexta às 10h ou 16h, ou segunda às 9h. Qual fica melhor?", "h": "07:40"}, {"f": "c", "t": "Sexta 16h", "h": "07:41"}, {"f": "a", "t": "Remarcado ✅ Sexta, 16h, limpeza de pele com a Dra. Paula. Te lembro na véspera.", "h": "07:41"}, {"f": "s", "sys": true, "t": "Quinta 15h liberada · lista de espera avisada · Patrícia aceitou às 07:52"}, {"f": "a", "t": "Juliana, uma dica: sua próxima limpeza fica ideal daqui a um mês. Já deixo reservado o dia 21 às 16h?", "h": "07:42"}, {"f": "c", "t": "Pode deixar", "h": "07:43"}, {"f": "a", "t": "Reservado. Até sexta! 🌿", "h": "07:43"}]};
+
+window.buildScene = function(T, scene, camera, o){
+  camera.position.set(0, 0, 9);
+  var noise = [
+"vec3 mod289(vec3 x){return x-floor(x*(1.0/289.0))*289.0;}",
+"vec4 mod289(vec4 x){return x-floor(x*(1.0/289.0))*289.0;}",
+"vec4 permute(vec4 x){return mod289(((x*34.0)+1.0)*x);}",
+"vec4 taylorInvSqrt(vec4 r){return 1.79284291400159-0.85373472095314*r;}",
+"float snoise(vec3 v){const vec2 C=vec2(1.0/6.0,1.0/3.0);const vec4 D=vec4(0.0,0.5,1.0,2.0);",
+"vec3 i=floor(v+dot(v,C.yyy));vec3 x0=v-i+dot(i,C.xxx);vec3 g=step(x0.yzx,x0.xyz);vec3 l=1.0-g;",
+"vec3 i1=min(g.xyz,l.zxy);vec3 i2=max(g.xyz,l.zxy);vec3 x1=x0-i1+C.xxx;vec3 x2=x0-i2+C.yyy;vec3 x3=x0-D.yyy;",
+"i=mod289(i);vec4 p=permute(permute(permute(i.z+vec4(0.0,i1.z,i2.z,1.0))+i.y+vec4(0.0,i1.y,i2.y,1.0))+i.x+vec4(0.0,i1.x,i2.x,1.0));",
+"float n_=0.142857142857;vec3 ns=n_*D.wyz-D.xzx;vec4 j=p-49.0*floor(p*ns.z*ns.z);vec4 x_=floor(j*ns.z);vec4 y_=floor(j-7.0*x_);",
+"vec4 x=x_*ns.x+ns.yyyy;vec4 y=y_*ns.x+ns.yyyy;vec4 h=1.0-abs(x)-abs(y);vec4 b0=vec4(x.xy,y.xy);vec4 b1=vec4(x.zw,y.zw);",
+"vec4 s0=floor(b0)*2.0+1.0;vec4 s1=floor(b1)*2.0+1.0;vec4 sh=-step(h,vec4(0.0));vec4 a0=b0.xzyw+s0.xzyw*sh.xxyy;vec4 a1=b1.xzyw+s1.xzyw*sh.zzww;",
+"vec3 p0=vec3(a0.xy,h.x);vec3 p1=vec3(a0.zw,h.y);vec3 p2=vec3(a1.xy,h.z);vec3 p3=vec3(a1.zw,h.w);",
+"vec4 norm=taylorInvSqrt(vec4(dot(p0,p0),dot(p1,p1),dot(p2,p2),dot(p3,p3)));p0*=norm.x;p1*=norm.y;p2*=norm.z;p3*=norm.w;",
+"vec4 m=max(0.6-vec4(dot(x0,x0),dot(x1,x1),dot(x2,x2),dot(x3,x3)),0.0);m=m*m;",
+"return 42.0*dot(m*m,vec4(dot(p0,x0),dot(p1,x1),dot(p2,x2),dot(p3,x3)));}"
+  ].join("\n");
+  var uni = {uT:{value:0}, uAmp:{value:.32}};
+  var mat = new T.ShaderMaterial({
+    uniforms: uni,
+    vertexShader: noise + "\nuniform float uT;uniform float uAmp;varying vec3 vN;varying vec3 vV;varying float vD;\nvoid main(){float d=snoise(normal*1.15+vec3(uT*.22))*uAmp+snoise(normal*2.6-vec3(uT*.3))*uAmp*.35;vD=d;vec3 p=position+normal*d;vec3 e=vec3(.01,0.,0.);\nvN=normalize(normalMatrix*normal);vec4 mv=modelViewMatrix*vec4(p,1.);vV=normalize(-mv.xyz);gl_Position=projectionMatrix*mv;}",
+    fragmentShader: "varying vec3 vN;varying vec3 vV;varying float vD;\nvoid main(){vec3 n=normalize(vN);float f=pow(1.-max(dot(n,vV),0.),2.2);\nvec3 pearl=vec3(.96,.9,.93);vec3 rose=vec3(.83,.55,.7);vec3 lil=vec3(.68,.62,.86);vec3 sage=vec3(.58,.74,.66);\nfloat k=n.y*.5+.5;vec3 c=mix(rose,pearl,smoothstep(.1,.9,k+vD*.8));c=mix(c,lil,smoothstep(.55,1.,f)*.8);c=mix(c,sage,smoothstep(.2,.9,n.x*.5+.5-vD)*.25);\nfloat spec=pow(max(dot(reflect(-vec3(.4,.7,.6),n),vV),0.),28.);c+=spec*.55+f*.18;gl_FragColor=vec4(c,1.);}"
+  });
+  var blob = new T.Mesh(new T.IcosahedronGeometry(2.1, o.small ? 32 : 64), mat);
+  scene.add(blob);
+  var pearls = [], pm = new T.MeshBasicMaterial({color:0xffffff});
+  var pg = new T.SphereGeometry(1, 20, 14);
+  var pc = [0xf3dbe7, 0xe4dcf3, 0xd9ebe3];
+  for (var i=0; i<(o.small?5:9); i++){
+    var m = new T.Mesh(pg, new T.MeshBasicMaterial({color:pc[i%3]}));
+    m.scale.setScalar(.08 + Math.random()*.16);
+    m.userData = {r:2.9+Math.random()*1.6, s:.15+Math.random()*.3, p:Math.random()*6.28, y:(Math.random()-.5)*2.6};
+    scene.add(m); pearls.push(m);
+  }
+  function place(w, h){ var wide = w > 760; blob.position.y = wide ? .55 : 1.1; blob.scale.setScalar(wide ? 1 : .78); }
+  return {
+    resize: place,
+    update: function(t, mouse, sk){
+      uni.uT.value = t;
+      uni.uAmp.value = .28 + Math.abs(mouse.x)*.12 + sk*.2;
+      blob.rotation.y = t*.12 + mouse.x*.4;
+      blob.rotation.x = mouse.y*.25;
+      for (var i=0; i<pearls.length; i++){
+        var p = pearls[i], u = p.userData, a = t*u.s + u.p;
+        p.position.set(Math.cos(a)*u.r, blob.position.y + u.y + Math.sin(a*1.3)*.3, Math.sin(a)*u.r*.6);
+      }
+    }
+  };
+};
+
+</script>
+<script>
+/* ===== Base comum das vitrines SEVEN AI (agendamento + WhatsApp simulado + 3D) ===== */
+(function(){
+  "use strict";
+  var CFG = window.VITRINE;
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function $(s, r){ return (r||document).querySelector(s); }
+  function el(tag, cls, txt){ var e=document.createElement(tag); if(cls) e.className=cls; if(txt!=null) e.textContent=txt; return e; }
+
+  /* ---------- Rolagem suave dos botões de chamada ---------- */
+  document.querySelectorAll("[data-goto]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var t=document.getElementById(b.getAttribute("data-goto"));
+      if(t) t.scrollIntoView({behavior: reduce?"auto":"smooth", block:"start"});
+    });
+  });
+
+  /* ---------- Agendamento ---------- */
+  var LIVE = !!(CFG.intake && CFG.intake.url && /\.github\.io$/.test(location.hostname));
+  if(LIVE){ var cw=document.getElementById("bk-consent-wrap"); if(cw) cw.hidden=false; }
+  var bk = { step:0, service:null, extra:null, date:null, time:null, name:"", phone:"" };
+  var root = $("#agenda");
+  var steps = root.querySelectorAll(".bk-step");
+  var dots = root.querySelectorAll(".bk-progress li");
+  var DAYS = ["dom","seg","ter","qua","qui","sex","sáb"];
+  var MONTHS = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
+
+  function show(i){
+    bk.step=i;
+    steps.forEach(function(s,k){ s.hidden = k!==i; });
+    dots.forEach(function(d,k){ d.classList.toggle("on", k<=i); d.setAttribute("aria-current", k===i?"step":"false"); });
+    var f = steps[i].querySelector("button, input");
+    if(f && bk.touched) f.focus({preventScroll:true});
+  }
+
+  // passo 1: serviços
+  var svcBox = $("#bk-services");
+  CFG.services.forEach(function(s){
+    var b=el("button","bk-opt"); b.type="button";
+    var t=el("span","bk-opt-t",s.name); var m=el("span","bk-opt-m",s.meta);
+    b.appendChild(t); b.appendChild(m);
+    b.addEventListener("click",function(){
+      bk.touched=true; bk.service=s;
+      svcBox.querySelectorAll(".bk-opt").forEach(function(x){x.classList.remove("sel");}); b.classList.add("sel");
+      show(CFG.extra ? 1 : 2);
+    });
+    svcBox.appendChild(b);
+  });
+
+  // passo 2 (opcional): campo do nicho (porte do pet, imóvel...)
+  if(CFG.extra){
+    $("#bk-extra-label").textContent = CFG.extra.label;
+    var exBox=$("#bk-extra");
+    CFG.extra.options.forEach(function(o){
+      var b=el("button","bk-chip",o); b.type="button";
+      b.addEventListener("click",function(){ bk.extra=o; exBox.querySelectorAll(".bk-chip").forEach(function(x){x.classList.remove("sel");}); b.classList.add("sel"); show(2); });
+      exBox.appendChild(b);
+    });
+  }
+
+  // passo 3: data
+  var dBox=$("#bk-dates"), tBox=$("#bk-times");
+  var today=new Date(); today.setHours(0,0,0,0);
+  var n=0, d=new Date(today);
+  while(n<12){
+    d.setDate(d.getDate()+1);
+    if(CFG.closed.indexOf(d.getDay())>-1) continue;
+    (function(day){
+      var b=el("button","bk-day"); b.type="button";
+      b.appendChild(el("span","bk-day-w",DAYS[day.getDay()]));
+      b.appendChild(el("span","bk-day-n",String(day.getDate())));
+      b.appendChild(el("span","bk-day-m",MONTHS[day.getMonth()]));
+      b.addEventListener("click",function(){
+        bk.date=day; dBox.querySelectorAll(".bk-day").forEach(function(x){x.classList.remove("sel");}); b.classList.add("sel");
+        renderTimes(); show(3);
+      });
+      dBox.appendChild(b);
+    })(new Date(d));
+    n++;
+  }
+  function hash(s){ var h=0; for(var i=0;i<s.length;i++){ h=(h*31+s.charCodeAt(i))|0; } return Math.abs(h); }
+  function renderTimes(){
+    tBox.innerHTML="";
+    var key=bk.date.toDateString();
+    CFG.slots.forEach(function(t,i){
+      var busy = (hash(key+t+(bk.service?bk.service.name:""))%10)<4;
+      var b=el("button","bk-time"+(busy?" busy":""),t); b.type="button";
+      if(busy){ b.disabled=true; b.setAttribute("aria-label",t+" ocupado"); b.title="Ocupado"; }
+      b.addEventListener("click",function(){ bk.time=t; tBox.querySelectorAll(".bk-time").forEach(function(x){x.classList.remove("sel");}); b.classList.add("sel"); show(4); });
+      tBox.appendChild(b);
+    });
+    $("#bk-date-label").textContent = DAYS[bk.date.getDay()]+", "+bk.date.getDate()+" de "+MONTHS[bk.date.getMonth()];
+  }
+
+  // passo 5: dados
+  $("#bk-form").addEventListener("submit",function(e){
+    e.preventDefault();
+    var nm=$("#bk-name").value.trim(), ph=$("#bk-phone").value.replace(/\D/g,"");
+    var err=$("#bk-err");
+    if(nm.length<2){ err.textContent="Escreva seu nome para a gente saber como te chamar."; $("#bk-name").focus(); return; }
+    if(ph.length<10){ err.textContent="O telefone precisa ter DDD e número, por exemplo 12 99999-0000."; $("#bk-phone").focus(); return; }
+    err.textContent=""; bk.name=nm.split(" ")[0];
+    var resumo = bk.service.name + (bk.extra? " · "+bk.extra : "") + " — " + DAYS[bk.date.getDay()]+", "+bk.date.getDate()+" de "+MONTHS[bk.date.getMonth()]+" às "+bk.time;
+    function done(note){
+      $("#bk-sum-name").textContent=bk.name; $("#bk-sum").textContent=resumo;
+      if(note) $("#bk-done-note").textContent=note;
+      show(5); var ck=$("#bk-check"); ck.classList.remove("draw"); void ck.getBoundingClientRect(); ck.classList.add("draw");
+    }
+    if(!LIVE){ done(); return; }
+    var btn=e.submitter||$("#bk-form button[type=submit]"); btn.disabled=true; btn.textContent="Enviando…";
+    fetch(CFG.intake.url,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({
+      tenant:CFG.intake.tenant, nome:nm, telefone:ph, servico:bk.service.name, detalhe:bk.extra||"",
+      data:bk.date.toISOString().slice(0,10), horario:bk.time, pagina:location.pathname,
+      consentimento:$("#bk-consent").checked, website:$("#bk-website").value })})
+    .then(function(r){ return r.json().catch(function(){return {};}).then(function(j){ return {status:r.status, j:j}; }); })
+    .then(function(x){
+      btn.disabled=false; btn.textContent="Confirmar horário";
+      if(x.j && x.j.ok){ done("Pedido recebido. Ele já está no CRM da demonstração" + (x.j.followup_scheduled? " e o retorno pelo WhatsApp ficou agendado para amanhã às 10h." : ".")); }
+      else if(x.status===429){ err.textContent="Muitos pedidos seguidos. Espere alguns minutos e tente de novo."; }
+      else { err.textContent="Não conseguimos registrar agora. Confira nome e telefone e tente de novo."; }
+    })
+    .catch(function(){ btn.disabled=false; btn.textContent="Confirmar horário"; err.textContent="Sem conexão com o servidor. Tente de novo em instantes."; });
+  });
+  $("#bk-phone").addEventListener("input",function(e){
+    var v=e.target.value.replace(/\D/g,"").slice(0,11);
+    if(v.length>6) v="("+v.slice(0,2)+") "+v.slice(2,v.length-4)+"-"+v.slice(-4);
+    else if(v.length>2) v="("+v.slice(0,2)+") "+v.slice(2);
+    e.target.value=v;
+  });
+  root.querySelectorAll("[data-back]").forEach(function(b){
+    b.addEventListener("click",function(){
+      var to=bk.step-1; if(to===1 && !CFG.extra) to=0; show(Math.max(0,to));
+    });
+  });
+  $("#bk-restart").addEventListener("click",function(){
+    bk={step:0,touched:true}; root.querySelectorAll(".sel").forEach(function(x){x.classList.remove("sel");});
+    $("#bk-form").reset(); show(0);
+  });
+  show(0);
+
+  /* ---------- WhatsApp simulado ---------- */
+  var chat=$("#chat-body"), playing=false, played=false;
+  function bubble(m){
+    var b=el("div","msg "+(m.f==="c"?"in":"out"));
+    if(m.sys){ b=el("div","msg sys"); }
+    var p=el("p",null,m.t); b.appendChild(p);
+    if(!m.sys){ var tm=el("span","msg-time",m.h||""); if(m.f!=="c") tm.textContent=(m.h||"")+" ✓✓"; b.appendChild(tm); }
+    return b;
+  }
+  function renderAll(){ chat.innerHTML=""; CFG.chat.forEach(function(m){ chat.appendChild(bubble(m)); }); }
+  function play(){
+    if(playing) return; playing=true; played=true;
+    chat.innerHTML=""; var i=0;
+    function next(){
+      if(i>=CFG.chat.length){ playing=false; return; }
+      var m=CFG.chat[i++];
+      if(m.f!=="c" && !m.sys){
+        var ty=el("div","msg out typing"); ty.innerHTML="<i></i><i></i><i></i>"; chat.appendChild(ty); chat.scrollTop=chat.scrollHeight;
+        setTimeout(function(){ ty.remove(); chat.appendChild(bubble(m)); chat.scrollTop=chat.scrollHeight; setTimeout(next,700); }, Math.min(1600, 500+m.t.length*12));
+      } else { chat.appendChild(bubble(m)); chat.scrollTop=chat.scrollHeight; setTimeout(next, m.sys?900:1100); }
+    }
+    next();
+  }
+  renderAll();
+  $("#chat-play").addEventListener("click",function(){ playing=false; play(); });
+  if(!reduce && "IntersectionObserver" in window){
+    var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting && !played){ play(); } }); },{threshold:.45});
+    io.observe($("#whats"));
+  }
+
+  /* ---------- Copiar contato ---------- */
+  var cp=$("#copy-mail");
+  if(cp) cp.addEventListener("click",function(){
+    var t=$("#mail-text").textContent, msg=$("#copy-ok");
+    function sel(){ var r=document.createRange(); r.selectNodeContents($("#mail-text")); var s=getSelection(); s.removeAllRanges(); s.addRange(r); msg.textContent="Endereço selecionado. Use Ctrl+C para copiar."; }
+    try{ navigator.clipboard.writeText(t).then(function(){ msg.textContent="E-mail copiado."; }, sel); }catch(e){ sel(); }
+  });
+
+  /* ---------- Pequenas interações por nicho ---------- */
+  document.querySelectorAll(".seg").forEach(function(g){
+    g.querySelectorAll("button").forEach(function(b){
+      b.addEventListener("click",function(){ g.querySelectorAll("button").forEach(function(x){ x.setAttribute("aria-pressed", x===b?"true":"false"); }); });
+    });
+  });
+  var sw=$("#swap");
+  if(sw){
+    if(reduce || !("IntersectionObserver" in window)) sw.classList.add("done");
+    else new IntersectionObserver(function(es,ob){ if(es[0].isIntersecting){ setTimeout(function(){ sw.classList.add("done"); },1400); ob.disconnect(); } },{threshold:.6}).observe(sw);
+  }
+
+  /* ---------- Cena 3D ---------- */
+  var hero=$(".hero"), canvas=$("#scene");
+  function fallback(){ hero.classList.add("no3d"); if(canvas) canvas.remove(); }
+  function webgl(){ try{ var c=document.createElement("canvas"); return !!(window.WebGLRenderingContext && (c.getContext("webgl")||c.getContext("experimental-webgl"))); }catch(e){ return false; } }
+  if(!window.THREE || !canvas || !webgl() || typeof window.buildScene!=="function"){ fallback(); return; }
+  try{
+    var T=window.THREE, small=window.innerWidth<700;
+    var renderer=new T.WebGLRenderer({canvas:canvas, antialias:!small, alpha:true});
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio||1, 2));
+    var scene=new T.Scene();
+    var camera=new T.PerspectiveCamera(40,1,0.1,200);
+    var api=window.buildScene(T, scene, camera, {small:small});
+    var mouse={x:0,y:0,tx:0,ty:0}, scrollK=0, visible=true, running=true, t0=performance.now();
+    function size(){ var w=hero.clientWidth, h=hero.clientHeight; renderer.setSize(w,h,false); camera.aspect=w/h; camera.updateProjectionMatrix(); if(api.resize) api.resize(w,h); }
+    window.addEventListener("resize",size); size();
+    function mv(x,y){ var r=hero.getBoundingClientRect(); mouse.tx=((x-r.left)/r.width)*2-1; mouse.ty=((y-r.top)/r.height)*2-1; }
+    hero.addEventListener("pointermove",function(e){ mv(e.clientX,e.clientY); });
+    hero.addEventListener("touchmove",function(e){ if(e.touches[0]) mv(e.touches[0].clientX,e.touches[0].clientY); },{passive:true});
+    window.addEventListener("scroll",function(){ scrollK=Math.min(1, window.scrollY/Math.max(1,hero.clientHeight)); },{passive:true});
+    document.addEventListener("visibilitychange",function(){ running=!document.hidden; if(running) loop(); });
+    if("IntersectionObserver" in window){ new IntersectionObserver(function(es){ visible=es[0].isIntersecting; if(visible) loop(); }).observe(hero); }
+    var raf=0;
+    function frame(now){
+      raf=0;
+      mouse.x+=(mouse.tx-mouse.x)*0.05; mouse.y+=(mouse.ty-mouse.y)*0.05;
+      api.update((now-t0)/1000, mouse, scrollK);
+      renderer.render(scene,camera);
+      if(!reduce && running && visible) raf=requestAnimationFrame(frame);
+    }
+    function loop(){ if(!raf) raf=requestAnimationFrame(frame); }
+    hero.classList.add("has3d");
+    loop();
+  }catch(e){ fallback(); }
+})();
+
+</script>
+
+</body>
+</html>
