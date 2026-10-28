@@ -113,7 +113,7 @@ aside section h4{margin:0;font-size:13px;color:var(--muted)}
 
   $("#login").addEventListener("submit",async function(e){
     e.preventDefault();var m=$("#login-msg");m.textContent="Enviando…";
-    var r=await sb.auth.signInWithOtp({email:$("#email").value.trim(),options:{emailRedirectTo:location.href.split("#")[0],shouldCreateUser:false}});
+    var r=await sb.auth.signInWithOtp({email:$("#email").value.trim(),options:{emailRedirectTo:location.href.split("#")[0],shouldCreateUser:true}});
     m.textContent=r.error?"Não foi possível enviar. Confira se o e-mail tem acesso ao CRM.":"Pronto. Abra o link que chegou no seu e-mail.";
   });
   $("#logout").addEventListener("click",async function(){await sb.auth.signOut();location.reload()});
